@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing from original request -->
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+
+    <!-- Text Sizes from original request -->
+    <dimen name="text_size_label">14sp</dimen>
+    <dimen name="text_size_body">16sp</dimen>
+    <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_time">56sp</dimen>
+
+    <!-- Component Sizes from original request -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="chip_height">40dp</dimen>
+    
+    <!-- Added to fix build errors -->
+    <dimen name="spacing_micro">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_normal">16dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_extra_large">32dp</dimen>
+    <dimen name="corner_radius_medium">12dp</dimen>
+    <dimen name="icon_size_large">48dp</dimen>
+    <dimen name="text_size_ringing_time">64sp</dimen>
+    <dimen name="text_size_body_medium">14sp</dimen>
+</resources>

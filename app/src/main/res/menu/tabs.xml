@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/alarm_tab"
+        android:icon="@drawable/ic_alarm"
+        android:title="Alarm" />
+    <item
+        android:id="@+id/clock_tab"
+        android:icon="@drawable/ic_clock"
+        android:title="Clock" />
+    <item
+        android:id="@+id/timer_tab"
+        android:icon="@drawable/ic_timer"
+        android:title="Timer" />
+    <item
+        android:id="@+id/sleep_tab"
+        android:icon="@drawable/ic_sleep"
+        android:title="Sleep" />
+</menu>

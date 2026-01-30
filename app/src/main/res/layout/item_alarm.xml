@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="?attr/materialCardViewElevatedStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="@dimen/margin_medium"
+    android:layout_marginVertical="@dimen/margin_small">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_medium">
+
+        <TextView
+            android:id="@+id/item_alarm_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceHeadlineLarge"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1:09 AM" />
+
+        <TextView
+            android:id="@+id/item_alarm_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_alarm_time"
+            tools:text="Wake Up!" />
+
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/item_alarm_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/item_day_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/item_alarm_label">
+
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_sun" android:text="S" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_mon" android:text="M" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_tue" android:text="T" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_wed" android:text="W" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_thu" android:text="T" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_fri" android:text="F" />
+            <TextView style="@style/DayOfWeekTextView" android:id="@+id/item_day_sat" android:text="S" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

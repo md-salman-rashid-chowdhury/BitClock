@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BitClock</string>
+    <string name="am">AM</string>
+    <string name="pm">PM</string>
+    <string name="once">Once</string>
+    <string name="every_day">Every day</string>
+    <string name="sun">Sun</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="alarm_passed">Alarm passed</string>
+    <string name="in_hours_and_minutes">In %1$d hours %2$d min</string>
+    <string name="in_minutes">In %d minutes</string>
+    <string name="alarm">Alarm</string>
+    <string name="alarm_enabled">Alarm enabled</string>
+    <string name="alarm_disabled">Alarm disabled</string>
+    <string name="alarm_id_extra">ALARM_ID</string>
+    <string name="alarm_deleted">Alarm deleted</string>
+    <string name="undo">Undo</string>
+    <string name="new_alarm">New Alarm</string>
+    <string name="edit_alarm">Edit Alarm</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="alarm_saved">Alarm saved</string>
+    <string name="clock">Clock</string>
+    <string name="timer">Timer</string>
+    <string name="stopwatch">Stopwatch</string>
+    <string name="sleep">Sleep</string>
+
+    <!-- New Strings -->
+    <string name="add_alarm">Add Alarm</string>
+    <string name="no_alarms_yet">No alarms yet!</string>
+    <string name="tap_fab_to_add">Tap the button below to add your first alarm.</string>
+    <string name="alarm_label_hint">Alarm Label (e.g., Wake Up, Gym)</string>
+    <string name="repeat_days">Repeat Days</string>
+    <string name="sound">Sound</string>
+    <string name="vibration">Vibration</string>
+    <string name="snooze_duration">Snooze Duration</string>
+    <string name="save_alarm">Save Alarm</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="snooze">Snooze</string>
+    <string name="alarm_ringing">Alarm Ringing!</string>
+    <string name="monday_abbr">Mon</string>
+    <string name="tuesday_abbr">Tue</string>
+    <string name="wednesday_abbr">Wed</string>
+    <string name="thursday_abbr">Thu</string>
+    <string name="friday_abbr">Fri</string>
+    <string name="saturday_abbr">Sat</string>
+    <string name="sunday_abbr">Sun</string>
+    <string name="rings_in_placeholder">Rings in %s</string> <!-- Example: Rings in 7h 30m -->
+</resources>

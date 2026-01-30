@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface"
+    tools:context=".ui.alarm.AlarmDetailActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorSurface"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/ic_arrow_back"
+            app:title="Set Alarm" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/app_bar_layout"
+        app:layout_constraintBottom_toTopOf="@+id/save_button_container">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_medium">
+
+            <!-- Time Picker -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_background"
+                android:paddingVertical="@dimen/margin_medium">
+
+                <NumberPicker
+                    android:id="@+id/picker_hour"
+                    android:theme="@style/Widget.BitClock.NumberPicker"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:solidColor="@android:color/transparent"
+                    app:layout_constraintEnd_toStartOf="@id/time_separator_1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/time_separator_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=":"
+                    android:textSize="34sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/picker_minute"
+                    app:layout_constraintStart_toEndOf="@id/picker_hour"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <NumberPicker
+                    android:id="@+id/picker_minute"
+                    android:theme="@style/Widget.BitClock.NumberPicker"
+                    android:layout_width="0dp"
+                    android:layout_height="180dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:solidColor="@android:color/transparent"
+                    app:layout_constraintEnd_toStartOf="@id/picker_am_pm"
+                    app:layout_constraintStart_toEndOf="@id/time_separator_1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <NumberPicker
+                    android:id="@+id/picker_am_pm"
+                    android:theme="@style/Widget.BitClock.NumberPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="180dp"
+                    android:descendantFocusability="blocksDescendants"
+                    android:solidColor="@android:color/transparent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/picker_minute"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Repeat Days -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_large"
+                android:text="Repeat Days"
+                android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+            <!-- **NEW**: Quick selection buttons -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_onetime"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/margin_small"
+                    android:text="One-time" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_everyday"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_small"
+                    android:layout_weight="1"
+                    android:text="Everyday" />
+
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_repeat_days"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                app:singleLine="false">
+
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_sun" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Sun" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_mon" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Mon" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_tue" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Tue" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_wed" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Wed" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_thu" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Thu" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_fri" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Fri" />
+                <com.google.android.material.chip.Chip style="@style/Widget.Material3.Chip.Filter" android:id="@+id/chip_sat" android:layout_width="wrap_content" android:layout_height="@dimen/chip_height" android:text="Sat" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- Alarm Label -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/label_input_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:hint="Alarm Label">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/label_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Sound Selector -->
+            <RelativeLayout
+                android:id="@+id/sound_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingVertical="@dimen/margin_medium">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sound"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <TextView
+                    android:id="@+id/sound_selection_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:drawableEnd="@drawable/ic_arrow_forward"
+                    android:drawablePadding="@dimen/margin_small"
+                    android:text="Default" />
+
+            </RelativeLayout>
+
+            <!-- Vibration Toggle -->
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/vibration_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:checked="true"
+                android:text="Vibration"
+                android:textAppearance="?attr/textAppearanceBodyLarge"/>
+
+            <!-- Snooze Duration -->
+            <RelativeLayout
+                android:id="@+id/snooze_selector"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingVertical="@dimen/margin_medium">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Snooze Duration"
+                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+
+                <TextView
+                    android:id="@+id/snooze_selection_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:drawableEnd="@drawable/ic_arrow_forward"
+                    android:drawablePadding="@dimen/margin_small"
+                    android:text="10 minutes" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/save_button_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/margin_medium"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height"
+            android:text="Save Alarm" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

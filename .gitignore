@@ -1,0 +1,30 @@
+# IDE files
+*.iml
+.idea/
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration
+local.properties
+
+# Keystore files
+*.jks
+*.keystore
+
+# Outputs
+/captures/
+*.apk
+*.aab
+output.json
+
+# Other
+.DS_Store
+
+# C/C++ generated files
+.cxx/
+.externalNativeBuild/
+
+# Android Studio profiling data
+*.hprof

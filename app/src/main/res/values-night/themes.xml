@@ -1,0 +1,35 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.BitClock" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/md_theme_primary</item>
+        <item name="colorPrimaryVariant">@color/md_theme_primaryContainer</item>
+        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/md_theme_secondary</item>
+        <item name="colorSecondaryVariant">@color/md_theme_secondaryContainer</item>
+        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+
+        <!-- Material 3 specific attributes -->
+        <item name="colorSurface">@color/md_theme_inverseSurface</item>
+        <item name="colorOnSurface">@color/md_theme_inverseOnSurface</item>
+        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
+        <item name="colorError">@color/md_theme_error</item>
+        <item name="colorOnError">@color/md_theme_onError</item>
+        <item name="android:textColorPrimary">@color/md_theme_inverseOnSurface</item>
+        <item name="android:textColorSecondary">@color/md_theme_onSurfaceVariant</item>
+        <item name="android:windowBackground">@color/gradient_start</item>
+
+        <!-- Ripple effect for touch feedback -->
+        <item name="colorControlHighlight">@color/ripple</item>
+
+        <!-- Custom Widget Styles -->
+        <item name="materialCardViewStyle">@style/Widget.BitClock.CardView</item>
+
+    </style>
+</resources>

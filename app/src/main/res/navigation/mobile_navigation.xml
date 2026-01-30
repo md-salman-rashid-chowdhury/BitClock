@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/navigation_alarm">
+
+    <fragment
+        android:id="@+id/navigation_alarm"
+        android:name="com.salman.bitclock.ui.alarm.AlarmFragment"
+        android:label="Alarm"
+        tools:layout="@layout/fragment_alarm" />
+
+    <fragment
+        android:id="@+id/navigation_clock"
+        android:name="com.salman.bitclock.ui.clock.ClockFragment"
+        android:label="Clock" />
+
+    <fragment
+        android:id="@+id/navigation_timer"
+        android:name="com.salman.bitclock.ui.timer.TimerFragment"
+        android:label="Timer" />
+
+    <fragment
+        android:id="@+id/navigation_stopwatch"
+        android:name="com.salman.bitclock.ui.stopwatch.StopwatchFragment"
+        android:label="Stopwatch" />
+
+    <fragment
+        android:id="@+id/navigation_sleep"
+        android:name="com.salman.bitclock.ui.sleep.SleepFragment"
+        android:label="Sleep" />
+
+</navigation>
