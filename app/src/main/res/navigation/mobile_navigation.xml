@@ -26,9 +26,4 @@
         android:name="com.salman.bitclock.ui.stopwatch.StopwatchFragment"
         android:label="Stopwatch" />
 
-    <fragment
-        android:id="@+id/navigation_sleep"
-        android:name="com.salman.bitclock.ui.sleep.SleepFragment"
-        android:label="Sleep" />
-
 </navigation>

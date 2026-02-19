@@ -1,11 +1,14 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
     namespace = "com.salman.bitclock"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.salman.bitclock"
@@ -34,6 +37,11 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
+    }
 }
 
 dependencies {
@@ -48,6 +56,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.7.7")
 
     implementation(libs.room.runtime)
+    implementation(libs.core.ktx)
     annotationProcessor(libs.room.compiler)
     implementation("com.google.code.gson:gson:2.10.1")
 

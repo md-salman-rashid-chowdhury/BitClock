@@ -4,9 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
-import com.salman.bitclock.data.AlarmRepository;
+import com.salman.bitclock.data.repository.AlarmRepository;
 import com.salman.bitclock.data.models.Alarm;
 import com.salman.bitclock.di.AppModule;
 import com.salman.bitclock.services.AlarmRingingService;
@@ -14,48 +13,45 @@ import com.salman.bitclock.utils.AlarmScheduler;
 
 import dagger.hilt.android.EntryPointAccessors;
 
+/**
+ * Receiver that handles alarm triggers.
+ * Optimized to use the Repository and AlarmScheduler efficiently.
+ */
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = "AlarmReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent == null) {
-            Log.e(TAG, "Received null intent");
-            return;
-        }
+        if (intent == null) return;
 
-        final String action = intent.getAction();
-        Log.d(TAG, "Received intent with action: " + action);
-
+        String action = intent.getAction();
         if ("com.salman.bitclock.ALARM_TRIGGER".equals(action)) {
-            final int alarmId = intent.getIntExtra("ALARM_ID", -1);
-            if (alarmId == -1) {
-                Log.e(TAG, "Invalid alarm ID");
-                return;
-            }
+            int alarmId = intent.getIntExtra("ALARM_ID", -1);
+            if (alarmId == -1) return;
 
             final PendingResult pendingResult = goAsync();
-            AppModule.AlarmRepositoryEntryPoint entryPoint = EntryPointAccessors.fromApplication(context, AppModule.AlarmRepositoryEntryPoint.class);
-            final AlarmRepository alarmRepository = entryPoint.alarmRepository();
-            final AlarmScheduler scheduler = new AlarmScheduler(context);
+            
+            // Access the repository via Hilt EntryPoint
+            AppModule.AlarmRepositoryEntryPoint entryPoint = EntryPointAccessors.fromApplication(
+                    context, AppModule.AlarmRepositoryEntryPoint.class);
+            AlarmRepository alarmRepository = entryPoint.alarmRepository();
+            AlarmScheduler scheduler = new AlarmScheduler(context);
 
+            // Use a background thread to handle database/logic to keep CPU usage low on main thread
             new Thread(() -> {
                 try {
-                    // **FIX**: Use the synchronous method to get the alarm
                     Alarm alarm = alarmRepository.getAlarmByIdSync(alarmId);
                     if (alarm != null && alarm.isEnabled()) {
                         startAlarmService(context, alarm);
+                        
+                        // Handle rescheduling for repeating alarms
                         if (alarm.isRepeating()) {
                             scheduler.scheduleAlarm(alarm);
-                            Log.d(TAG, "Rescheduled repeating alarm ID: " + alarm.getId());
                         } else {
                             alarm.setEnabled(false);
                             alarmRepository.update(alarm);
-                            Log.d(TAG, "Disabled one-time alarm ID: " + alarm.getId());
                         }
-                    } else {
-                        Log.w(TAG, "Alarm is null or disabled, not starting service.");
                     }
                 } finally {
                     pendingResult.finish();
@@ -76,6 +72,5 @@ public class AlarmReceiver extends BroadcastReceiver {
         } else {
             context.startService(serviceIntent);
         }
-        Log.d(TAG, "Started AlarmRingingService for alarm ID: " + alarm.getId());
     }
 }

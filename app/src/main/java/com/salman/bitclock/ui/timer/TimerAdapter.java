@@ -1,5 +1,6 @@
 package com.salman.bitclock.ui.timer;
 
+import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,27 +27,18 @@ public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHol
     public TimerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_timer, parent, false);
-        return new TimerViewHolder(itemView);
+        return new TimerViewHolder(itemView, listener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TimerViewHolder holder, int position) {
-        Timer currentTimer = timers.get(position);
-        holder.timerName.setText(currentTimer.name);
-        holder.timerTime.setText(formatTime(currentTimer.remainingMs));
+        holder.bind(timers.get(position));
+    }
 
-        // Set the play/pause button icon based on the timer status
-        if (currentTimer.status == 1) { // Running
-            holder.playPauseButton.setImageResource(R.drawable.ic_pause);
-        } else { // Paused or stopped
-            holder.playPauseButton.setImageResource(R.drawable.ic_play_arrow);
-        }
-
-        holder.playPauseButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onPlayPauseClicked(currentTimer);
-            }
-        });
+    @Override
+    public void onViewRecycled(@NonNull TimerViewHolder holder) {
+        super.onViewRecycled(holder);
+        holder.cancelTimer();
     }
 
     @Override
@@ -59,16 +51,9 @@ public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHol
         notifyDataSetChanged();
     }
 
-    private String formatTime(long time) {
-        long seconds = (time / 1000) % 60;
-        long minutes = (time / (1000 * 60)) % 60;
-        long hours = (time / (1000 * 60 * 60)) % 24;
-
-        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
-    }
-
     public interface OnTimerInteractionListener {
         void onPlayPauseClicked(Timer timer);
+        void onTimerFinished(Timer timer);
     }
 
     public void setOnTimerInteractionListener(OnTimerInteractionListener listener) {
@@ -76,15 +61,70 @@ public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHol
     }
 
     static class TimerViewHolder extends RecyclerView.ViewHolder {
-        private TextView timerName;
-        private TextView timerTime;
-        private ImageButton playPauseButton;
+        private final TextView timerName;
+        private final TextView timerTime;
+        private final ImageButton playPauseButton;
+        private final OnTimerInteractionListener listener;
+        private CountDownTimer countDownTimer;
+        private Timer currentTimer;
 
-        public TimerViewHolder(@NonNull View itemView) {
+        public TimerViewHolder(@NonNull View itemView, OnTimerInteractionListener listener) {
             super(itemView);
+            this.listener = listener;
             timerName = itemView.findViewById(R.id.timer_name);
             timerTime = itemView.findViewById(R.id.timer_time);
             playPauseButton = itemView.findViewById(R.id.play_pause_button);
+
+            playPauseButton.setOnClickListener(v -> {
+                if (listener != null && currentTimer != null) {
+                    listener.onPlayPauseClicked(currentTimer);
+                }
+            });
+        }
+
+        public void bind(Timer timer) {
+            this.currentTimer = timer;
+            timerName.setText(timer.name);
+            cancelTimer();
+
+            if (timer.status == 1) { // Running
+                playPauseButton.setImageResource(R.drawable.ic_pause);
+                countDownTimer = new CountDownTimer(timer.remainingMs, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        currentTimer.remainingMs = millisUntilFinished;
+                        timerTime.setText(formatTime(millisUntilFinished));
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        currentTimer.remainingMs = 0;
+                        currentTimer.status = 0; // Stopped
+                        timerTime.setText(formatTime(0));
+                        playPauseButton.setImageResource(R.drawable.ic_play_arrow);
+                        if (listener != null) {
+                            listener.onTimerFinished(currentTimer);
+                        }
+                    }
+                }.start();
+            } else { // Paused or stopped
+                playPauseButton.setImageResource(R.drawable.ic_play_arrow);
+                timerTime.setText(formatTime(timer.remainingMs));
+            }
+        }
+
+        public void cancelTimer() {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
+        }
+
+        private String formatTime(long time) {
+            long seconds = (time / 1000) % 60;
+            long minutes = (time / (1000 * 60)) % 60;
+            long hours = (time / (1000 * 60 * 60)) % 24;
+            return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
         }
     }
 }

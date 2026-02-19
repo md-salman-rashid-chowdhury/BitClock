@@ -1,24 +1,24 @@
 package com.salman.bitclock.data.database;
 
 import android.content.Context;
-
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
-
 import com.salman.bitclock.data.models.Alarm;
-import com.salman.bitclock.data.models.Timer; // Assuming this is the correct model location
+import com.salman.bitclock.data.models.Timer;
 
 @Database(entities = {Alarm.class, Timer.class}, version = 1, exportSchema = false)
-public abstract class
+public abstract class AppDatabase extends RoomDatabase {
 
-AppDatabase extends RoomDatabase {
-
+    // Access to Alarm data
     public abstract AlarmDao alarmDao();
-    public abstract TimerDao timerDao(); // **FIX**: Added the missing TimerDao abstract method
+    
+    // Access to Timer data
+    public abstract TimerDao timerDao();
 
     private static volatile AppDatabase INSTANCE;
 
+    // Singleton pattern for database instance
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {

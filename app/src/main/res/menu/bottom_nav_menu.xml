@@ -20,10 +20,5 @@
         android:id="@+id/navigation_stopwatch"
         android:icon="@drawable/ic_stopwatch"
         android:title="Stopwatch" />
-    
-    <item
-        android:id="@+id/navigation_sleep"
-        android:icon="@drawable/ic_sleep"
-        android:title="Sleep" />
 
 </menu>

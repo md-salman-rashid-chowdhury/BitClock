@@ -12,8 +12,4 @@
         android:id="@+id/timer_tab"
         android:icon="@drawable/ic_timer"
         android:title="Timer" />
-    <item
-        android:id="@+id/sleep_tab"
-        android:icon="@drawable/ic_sleep"
-        android:title="Sleep" />
 </menu>
