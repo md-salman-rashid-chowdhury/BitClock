@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base Colors from original request for NumberPicker -->
-    <color name="primary">#6750A4</color>
-    <color name="on_primary">#FFFFFF</color>
-    <color name="primary_container">#E8DEF8</color>
-    <color name="secondary">#625B71</color>
-    <color name="surface">#FFFBFE</color>
-    <color name="surface_variant">#E7E0EC</color>
-    <color name="outline">#79747E</color>
+    <!-- Monochrome Palette - Light Mode -->
+    <color name="mono_primary">#000000</color>
+    <color name="mono_on_primary">#FFFFFF</color>
+    <color name="mono_primary_container">#EEEEEE</color>
+    <color name="mono_on_primary_container">#000000</color>
+    <color name="mono_secondary">#444444</color>
+    <color name="mono_on_secondary">#FFFFFF</color>
+    <color name="mono_secondary_container">#DDDDDD</color>
+    <color name="mono_on_secondary_container">#111111</color>
+    <color name="mono_background">#FFFFFF</color>
+    <color name="mono_on_background">#000000</color>
+    <color name="mono_surface">#FFFFFF</color>
+    <color name="mono_on_surface">#000000</color>
+    <color name="mono_surface_variant">#F5F5F5</color>
+    <color name="mono_on_surface_variant">#444444</color>
+    <color name="mono_outline">#777777</color>
 
-    <!-- Added to fix build errors -->
-    <color name="gradient_start">#FFFFFF</color>
-    <color name="gradient_end">#E8DEF8</color>
-    <color name="ripple">#1F000000</color> <!-- Default light ripple -->
+    <!-- Aliases for Material 3 standard names -->
+    <color name="md_theme_primary">@color/mono_primary</color>
+    <color name="md_theme_onPrimary">@color/mono_on_primary</color>
+    <color name="md_theme_primaryContainer">@color/mono_primary_container</color>
+    <color name="md_theme_onPrimaryContainer">@color/mono_on_primary_container</color>
+    <color name="md_theme_secondary">@color/mono_secondary</color>
+    <color name="md_theme_onSecondary">@color/mono_on_secondary</color>
+    <color name="md_theme_secondaryContainer">@color/mono_secondary_container</color>
+    <color name="md_theme_onSecondaryContainer">@color/mono_on_secondary_container</color>
+    <color name="md_theme_background">@color/mono_background</color>
+    <color name="md_theme_onBackground">@color/mono_on_background</color>
+    <color name="md_theme_surface">@color/mono_surface</color>
+    <color name="md_theme_onSurface">@color/mono_on_surface</color>
+    <color name="md_theme_surfaceVariant">@color/mono_surface_variant</color>
+    <color name="md_theme_onSurfaceVariant">@color/mono_on_surface_variant</color>
+    <color name="md_theme_outline">@color/mono_outline</color>
 
-    <!-- Material 3 Light Theme Palette -->
-    <color name="md_theme_primary">#6750A4</color>
-    <color name="md_theme_onPrimary">#FFFFFF</color>
-    <color name="md_theme_primaryContainer">#EADDFF</color>
-    <color name="md_theme_onPrimaryContainer">#21005D</color>
-    <color name="md_theme_secondary">#625B71</color>
-    <color name="md_theme_onSecondary">#FFFFFF</color>
-    <color name="md_theme_secondaryContainer">#E8DEF8</color>
-    <color name="md_theme_onSecondaryContainer">#1D192B</color>
-    <color name="md_theme_tertiary">#7D5260</color>
-    <color name="md_theme_onTertiary">#FFFFFF</color>
-    <color name="md_theme_tertiaryContainer">#FFD8E4</color>
-    <color name="md_theme_onTertiaryContainer">#31111D</color>
-    <color name="md_theme_error">#B3261E</color>
-    <color name="md_theme_onError">#FFFFFF</color>
-    <color name="md_theme_errorContainer">#F9DEDC</color>
-    <color name="md_theme_onErrorContainer">#410E0B</color>
-    <color name="md_theme_background">#FFFBFE</color>
-    <color name="md_theme_onBackground">#1C1B1F</color>
-    <color name="md_theme_surface">#FFFBFE</color>
-    <color name="md_theme_onSurface">#1C1B1F</color>
-    <color name="md_theme_surfaceVariant">#E7E0EC</color>
-    <color name="md_theme_onSurfaceVariant">#49454F</color>
-    <color name="md_theme_outline">#79747E</color>
-    <color name="md_theme_inverseSurface">#313033</color>
-    <color name="md_theme_inverseOnSurface">#F4EFF4</color>
-    <color name="md_theme_inversePrimary">#D0BCFF</color>
-    <color name="md_theme_surfaceTint">#6750A4</color>
+    <!-- Legacy / Theme Mappings - Fixed to use colors instead of attributes to avoid ContextCompat crash -->
+    <color name="primary">@color/mono_primary</color>
+    <color name="primary_container">@color/mono_primary_container</color>
+    <color name="surface_variant">@color/mono_surface_variant</color>
+    <color name="outline">@color/mono_outline</color>
+
+    <!-- Functional colors -->
+    <color name="error">#B3261E</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="ripple_light">#1F000000</color>
+    <color name="ripple_dark">#1FFFFFFF</color>
 </resources>

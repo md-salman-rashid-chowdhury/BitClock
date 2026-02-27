@@ -62,7 +62,8 @@ public class AlarmRingingActivity extends AppCompatActivity {
         Log.d(TAG, "Snoozing alarm.");
         stopAlarmService();
 
-        int snoozeMinutes = 10; 
+        int alarmId = getIntent().getIntExtra("ALARM_ID", -1);
+        int snoozeMinutes = getIntent().getIntExtra("SNOOZE_MINUTES", 10);
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, snoozeMinutes);
@@ -71,12 +72,15 @@ public class AlarmRingingActivity extends AppCompatActivity {
         intent.setAction("com.salman.bitclock.ALARM_TRIGGER");
         intent.putExtras(getIntent());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, 
+        // Use unique alarmId to avoid collisions with other alarms
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, 
                 intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(calendar.getTimeInMillis(), pendingIntent);
-        alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
+        if (alarmManager != null) {
+            AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(calendar.getTimeInMillis(), pendingIntent);
+            alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
+        }
 
         Toast.makeText(this, "Snoozed for " + snoozeMinutes + " minutes", Toast.LENGTH_SHORT).show();
         finishAndRemoveTask();

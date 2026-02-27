@@ -34,6 +34,7 @@
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
+            android:theme="@style/Theme.BitClock.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +45,14 @@
         <!-- Other Activities -->
         <activity
             android:name=".ui.alarm.AlarmDetailActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ui.alarm.AlarmEditActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".ui.timer.TimerEditActivity"
             android:parentActivityName=".MainActivity" />
 
         <activity

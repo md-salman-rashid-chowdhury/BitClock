@@ -1,35 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme for Dark Mode (Monochrome) -->
     <style name="Theme.BitClock" parent="Theme.Material3.Dark.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/md_theme_primary</item>
-        <item name="colorPrimaryVariant">@color/md_theme_primaryContainer</item>
-        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
+        <item name="colorPrimary">@color/mono_dark_primary</item>
+        <item name="colorOnPrimary">@color/mono_dark_on_primary</item>
+        <item name="colorPrimaryContainer">@color/mono_dark_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/mono_dark_on_primary_container</item>
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/md_theme_secondary</item>
-        <item name="colorSecondaryVariant">@color/md_theme_secondaryContainer</item>
-        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorSurface</item>
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="colorSecondary">@color/mono_dark_secondary</item>
+        <item name="colorOnSecondary">@color/mono_dark_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/mono_dark_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/mono_dark_on_secondary_container</item>
+
+        <!-- Error color. -->
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/on_error</item>
+
+        <!-- Background and Surface colors. -->
+        <item name="android:colorBackground">@color/mono_dark_background</item>
+        <item name="colorOnBackground">@color/mono_dark_on_background</item>
+        <item name="colorSurface">@color/mono_dark_surface</item>
+        <item name="colorOnSurface">@color/mono_dark_on_surface</item>
+        <item name="colorSurfaceVariant">@color/mono_dark_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/mono_dark_on_surface_variant</item>
+        <item name="colorOutline">@color/mono_dark_outline</item>
+
+        <!-- Status bar and Navigation bar color. -->
+        <item name="android:statusBarColor">@color/mono_dark_background</item>
+        <item name="android:navigationBarColor">@color/mono_dark_background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-
-        <!-- Material 3 specific attributes -->
-        <item name="colorSurface">@color/md_theme_inverseSurface</item>
-        <item name="colorOnSurface">@color/md_theme_inverseOnSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
-        <item name="colorError">@color/md_theme_error</item>
-        <item name="colorOnError">@color/md_theme_onError</item>
-        <item name="android:textColorPrimary">@color/md_theme_inverseOnSurface</item>
-        <item name="android:textColorSecondary">@color/md_theme_onSurfaceVariant</item>
-        <item name="android:windowBackground">@color/gradient_start</item>
-
-        <!-- Ripple effect for touch feedback -->
-        <item name="colorControlHighlight">@color/ripple</item>
 
         <!-- Custom Widget Styles -->
         <item name="materialCardViewStyle">@style/Widget.BitClock.CardView</item>
+        <item name="numberPickerStyle">@style/Widget.BitClock.NumberPicker</item>
+    </style>
 
+    <!-- Custom Theme for Splash Screen -->
+    <style name="Theme.BitClock.Splash" parent="Theme.BitClock">
+        <item name="android:windowBackground">@color/mono_dark_background</item>
+    </style>
+
+    <style name="Widget.BitClock.CardView" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">16dp</item>
+    </style>
+
+    <style name="Widget.BitClock.NumberPicker" parent="Theme.AppCompat">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColorPrimary">@color/mono_dark_primary</item>
+        <item name="android:colorControlNormal">@android:color/transparent</item>
+    </style>
+
+    <style name="DayOfWeekTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
     </style>
 </resources>

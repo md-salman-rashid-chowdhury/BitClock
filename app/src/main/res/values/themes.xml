@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme for Light Mode -->
+    <!-- Base application theme for Light Mode (Monochrome) -->
     <style name="Theme.BitClock" parent="Theme.Material3.Light.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/md_theme_primary</item>
-        <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
-        <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
-        <item name="colorOnPrimaryContainer">@color/md_theme_onPrimaryContainer</item>
+        <item name="colorPrimary">@color/mono_primary</item>
+        <item name="colorOnPrimary">@color/mono_on_primary</item>
+        <item name="colorPrimaryContainer">@color/mono_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/mono_on_primary_container</item>
 
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/md_theme_secondary</item>
-        <item name="colorOnSecondary">@color/md_theme_onSecondary</item>
-        <item name="colorSecondaryContainer">@color/md_theme_secondaryContainer</item>
-        <item name="colorOnSecondaryContainer">@color/md_theme_onSecondaryContainer</item>
+        <item name="colorSecondary">@color/mono_secondary</item>
+        <item name="colorOnSecondary">@color/mono_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/mono_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/mono_on_secondary_container</item>
 
         <!-- Error color. -->
-        <item name="colorError">@color/md_theme_error</item>
-        <item name="colorOnError">@color/md_theme_onError</item>
-        <item name="colorErrorContainer">@color/md_theme_errorContainer</item>
-        <item name="colorOnErrorContainer">@color/md_theme_onErrorContainer</item>
+        <item name="colorError">@color/error</item>
+        <item name="colorOnError">@color/on_error</item>
 
         <!-- Background and Surface colors. -->
-        <item name="android:colorBackground">@color/md_theme_background</item>
-        <item name="colorOnBackground">@color/md_theme_onBackground</item>
-        <item name="colorSurface">@color/md_theme_surface</item>
-        <item name="colorOnSurface">@color/md_theme_onSurface</item>
-        <item name="colorSurfaceVariant">@color/md_theme_surfaceVariant</item>
-        <item name="colorOnSurfaceVariant">@color/md_theme_onSurfaceVariant</item>
-        <item name="colorOutline">@color/md_theme_outline</item>
+        <item name="android:colorBackground">@color/mono_background</item>
+        <item name="colorOnBackground">@color/mono_on_background</item>
+        <item name="colorSurface">@color/mono_surface</item>
+        <item name="colorOnSurface">@color/mono_on_surface</item>
+        <item name="colorSurfaceVariant">@color/mono_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/mono_on_surface_variant</item>
+        <item name="colorOutline">@color/mono_outline</item>
 
         <!-- Status bar and Navigation bar color. -->
-        <item name="android:statusBarColor">@color/md_theme_surface</item>
-        <item name="android:navigationBarColor">@color/md_theme_surface</item>
+        <item name="android:statusBarColor">@color/mono_background</item>
+        <item name="android:navigationBarColor">@color/mono_background</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
         <!-- Custom Widget Styles -->
@@ -39,9 +37,9 @@
         <item name="numberPickerStyle">@style/Widget.BitClock.NumberPicker</item>
     </style>
 
-    <!-- Dark Theme can be defined here if needed, or in a values-night/themes.xml file -->
-    <style name="Theme.BitClock.Dark" parent="Theme.Material3.Dark.NoActionBar">
-        <!-- Define your dark theme colors here -->
+    <!-- Custom Theme for Splash Screen -->
+    <style name="Theme.BitClock.Splash" parent="Theme.BitClock">
+        <item name="android:windowBackground">@color/mono_background</item>
     </style>
 
     <!-- Custom Widget Style Definitions -->
@@ -52,8 +50,8 @@
     </style>
 
     <style name="Widget.BitClock.NumberPicker" parent="Theme.AppCompat.Light">
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColorPrimary">@color/primary</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColorPrimary">@color/mono_primary</item>
         <item name="android:colorControlNormal">@android:color/transparent</item>
     </style>
 

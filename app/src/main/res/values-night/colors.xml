@@ -1,36 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material 3 Dark Theme Palette -->
-    <color name="md_theme_primary">#D0BCFF</color>
-    <color name="md_theme_onPrimary">#381E72</color>
-    <color name="md_theme_primaryContainer">#4F378B</color>
-    <color name="md_theme_onPrimaryContainer">#EADDFF</color>
-    <color name="md_theme_secondary">#CCC2DC</color>
-    <color name="md_theme_onSecondary">#332D41</color>
-    <color name="md_theme_secondaryContainer">#4A4458</color>
-    <color name="md_theme_onSecondaryContainer">#E8DEF8</color>
-    <color name="md_theme_tertiary">#EFB8C8</color>
-    <color name="md_theme_onTertiary">#492532</color>
-    <color name="md_theme_tertiaryContainer">#633B48</color>
-    <color name="md_theme_onTertiaryContainer">#FFD8E4</color>
-    <color name="md_theme_error">#F2B8B5</color>
-    <color name="md_theme_onError">#601410</color>
-    <color name="md_theme_errorContainer">#8C1D18</color>
-    <color name="md_theme_onErrorContainer">#F9DEDC</color>
-    <color name="md_theme_background">#1C1B1F</color>
-    <color name="md_theme_onBackground">#E6E1E5</color>
-    <color name="md_theme_surface">#1C1B1F</color>
-    <color name="md_theme_onSurface">#E6E1E5</color>
-    <color name="md_theme_surfaceVariant">#49454F</color>
-    <color name="md_theme_onSurfaceVariant">#CAC4D0</color>
-    <color name="md_theme_outline">#938F99</color>
-    <color name="md_theme_inverseSurface">#E6E1E5</color>
-    <color name="md_theme_inverseOnSurface">#313033</color>
-    <color name="md_theme_inversePrimary">#6750A4</color>
-    <color name="md_theme_surfaceTint">#D0BCFF</color>
+    <!-- Monochrome Palette - Dark Mode -->
+    <color name="mono_dark_primary">#FFFFFF</color>
+    <color name="mono_dark_on_primary">#000000</color>
+    <color name="mono_dark_primary_container">#333333</color>
+    <color name="mono_dark_on_primary_container">#FFFFFF</color>
+    <color name="mono_dark_secondary">#BBBBBB</color>
+    <color name="mono_dark_on_secondary">#000000</color>
+    <color name="mono_dark_secondary_container">#444444</color>
+    <color name="mono_dark_on_secondary_container">#EEEEEE</color>
+    <color name="mono_dark_background">#121212</color>
+    <color name="mono_dark_on_background">#FFFFFF</color>
+    <color name="mono_dark_surface">#121212</color>
+    <color name="mono_dark_on_surface">#FFFFFF</color>
+    <color name="mono_dark_surface_variant">#2C2C2C</color>
+    <color name="mono_dark_on_surface_variant">#BBBBBB</color>
+    <color name="mono_dark_outline">#999999</color>
 
-    <!-- Extra colors from original night theme -->
-    <color name="gradient_end">#3A384A</color>
-    <color name="gradient_start">#292838</color>
+    <!-- Aliases for Material 3 standard names -->
+    <color name="md_theme_primary">@color/mono_dark_primary</color>
+    <color name="md_theme_onPrimary">@color/mono_dark_on_primary</color>
+    <color name="md_theme_primaryContainer">@color/mono_dark_primary_container</color>
+    <color name="md_theme_onPrimaryContainer">@color/mono_dark_on_primary_container</color>
+    <color name="md_theme_secondary">@color/mono_dark_secondary</color>
+    <color name="md_theme_onSecondary">@color/mono_dark_on_secondary</color>
+    <color name="md_theme_secondaryContainer">@color/mono_dark_secondary_container</color>
+    <color name="md_theme_onSecondaryContainer">@color/mono_dark_on_secondary_container</color>
+    <color name="md_theme_background">@color/mono_dark_background</color>
+    <color name="md_theme_onBackground">@color/mono_dark_on_background</color>
+    <color name="md_theme_surface">@color/mono_dark_surface</color>
+    <color name="md_theme_onSurface">@color/mono_dark_on_surface</color>
+    <color name="md_theme_surfaceVariant">@color/mono_dark_surface_variant</color>
+    <color name="md_theme_onSurfaceVariant">@color/mono_dark_on_surface_variant</color>
+    <color name="md_theme_outline">@color/mono_dark_outline</color>
+
+    <!-- Legacy / Theme Mappings - Fixed to use colors instead of attributes -->
+    <color name="primary">@color/mono_dark_primary</color>
+    <color name="primary_container">@color/mono_dark_primary_container</color>
+    <color name="surface_variant">@color/mono_dark_surface_variant</color>
+    <color name="outline">@color/mono_dark_outline</color>
+
+    <!-- Extra colors used in code -->
+    <color name="gradient_end">#121212</color>
+    <color name="gradient_start">#121212</color>
     <color name="ripple">#40FFFFFF</color>
 </resources>

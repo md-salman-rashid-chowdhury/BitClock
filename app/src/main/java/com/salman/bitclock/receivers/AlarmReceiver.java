@@ -66,6 +66,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         serviceIntent.putExtra("ALARM_LABEL", alarm.getLabel());
         serviceIntent.putExtra("SOUND_URI", alarm.getSoundUri());
         serviceIntent.putExtra("VIBRATE", alarm.isVibrate());
+        serviceIntent.putExtra("SNOOZE_MINUTES", alarm.getSnoozeMinutes());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(serviceIntent);

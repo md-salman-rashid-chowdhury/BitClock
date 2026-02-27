@@ -1,6 +1,5 @@
 package com.salman.bitclock.ui.alarm;
 
-import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,14 +78,15 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             alarmLabel = itemView.findViewById(R.id.item_alarm_label);
             alarmSwitch = itemView.findViewById(R.id.item_alarm_switch);
             
+            // Reordered to match Mon-Sun bitmask (0-6)
             dayTextViews = new TextView[] {
-                itemView.findViewById(R.id.item_day_sun),
                 itemView.findViewById(R.id.item_day_mon),
                 itemView.findViewById(R.id.item_day_tue),
                 itemView.findViewById(R.id.item_day_wed),
                 itemView.findViewById(R.id.item_day_thu),
                 itemView.findViewById(R.id.item_day_fri),
-                itemView.findViewById(R.id.item_day_sat)
+                itemView.findViewById(R.id.item_day_sat),
+                itemView.findViewById(R.id.item_day_sun)
             };
         }
 
@@ -120,6 +120,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             alarmSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> onAlarmListener.onAlarmToggle(alarm, isChecked));
 
             int repeatDays = alarm.getRepeatDays();
+            
+            // FIX: ContextCompat.getColor works now that R.color.primary/outline point to colors instead of ?attr
             int activeColor = ContextCompat.getColor(itemView.getContext(), R.color.primary);
             int inactiveColor = ContextCompat.getColor(itemView.getContext(), R.color.outline);
             

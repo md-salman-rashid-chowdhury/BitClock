@@ -59,7 +59,7 @@ public class TimerAdapter extends ListAdapter<Timer, TimerAdapter.TimerViewHolde
         private final ImageButton playPauseButton;
         private final OnTimerInteractionListener listener;
         private CountDownTimer countDownTimer;
-        private Timer currentTimer;
+        private int timerId = -1;
 
         public TimerViewHolder(@NonNull View itemView, OnTimerInteractionListener listener) {
             super(itemView);
@@ -67,43 +67,48 @@ public class TimerAdapter extends ListAdapter<Timer, TimerAdapter.TimerViewHolde
             timerName = itemView.findViewById(R.id.timer_name);
             timerTime = itemView.findViewById(R.id.timer_time);
             playPauseButton = itemView.findViewById(R.id.play_pause_button);
-
-            playPauseButton.setOnClickListener(v -> {
-                if (listener != null && currentTimer != null) {
-                    listener.onPlayPauseClicked(currentTimer);
-                }
-            });
         }
 
         public void bind(Timer timer) {
-            this.currentTimer = timer;
+            this.timerId = timer.id;
             timerName.setText(timer.name);
             cancelTimer();
 
-            if (timer.status == 1) { // Running
-                playPauseButton.setImageResource(R.drawable.ic_pause);
-                countDownTimer = new CountDownTimer(timer.remainingMs, 1000) {
-                    @Override
-                    public void onTick(long millisUntilFinished) {
-                        currentTimer.remainingMs = millisUntilFinished;
-                        timerTime.setText(formatTime(millisUntilFinished));
-                    }
+            playPauseButton.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onPlayPauseClicked(timer);
+                }
+            });
 
-                    @Override
-                    public void onFinish() {
-                        currentTimer.remainingMs = 0;
-                        currentTimer.status = 0; // Stopped
-                        timerTime.setText(formatTime(0));
-                        playPauseButton.setImageResource(R.drawable.ic_play_arrow);
-                        if (listener != null) {
-                            listener.onTimerFinished(currentTimer);
-                        }
-                    }
-                }.start();
+            if (timer.status == 1 && timer.remainingMs > 0) { // Running
+                playPauseButton.setImageResource(R.drawable.ic_pause);
+                startCountdown(timer);
             } else { // Paused or stopped
                 playPauseButton.setImageResource(R.drawable.ic_play_arrow);
                 timerTime.setText(formatTime(timer.remainingMs));
             }
+        }
+
+        private void startCountdown(Timer timer) {
+            countDownTimer = new CountDownTimer(timer.remainingMs, 100) { // Higher precision for UI
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    // Update the model reference so if it's paused, we have the latest time
+                    timer.remainingMs = millisUntilFinished;
+                    timerTime.setText(formatTime(millisUntilFinished));
+                }
+
+                @Override
+                public void onFinish() {
+                    timer.remainingMs = 0;
+                    timer.status = 0;
+                    timerTime.setText(formatTime(0));
+                    playPauseButton.setImageResource(R.drawable.ic_play_arrow);
+                    if (listener != null) {
+                        listener.onTimerFinished(timer);
+                    }
+                }
+            }.start();
         }
 
         public void cancelTimer() {
@@ -114,9 +119,10 @@ public class TimerAdapter extends ListAdapter<Timer, TimerAdapter.TimerViewHolde
         }
 
         private String formatTime(long time) {
+            if (time < 0) time = 0;
             long seconds = (time / 1000) % 60;
             long minutes = (time / (1000 * 60)) % 60;
-            long hours = (time / (1000 * 60 * 60)) % 24;
+            long hours = (time / (1000 * 60 * 60));
             return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
         }
     }
@@ -129,9 +135,12 @@ public class TimerAdapter extends ListAdapter<Timer, TimerAdapter.TimerViewHolde
 
         @Override
         public boolean areContentsTheSame(@NonNull Timer oldItem, @NonNull Timer newItem) {
+            // Optimization: If the timer is running, we don't want to re-bind every tick 
+            // from the DB unless the status or name actually changed.
+            // This prevents UI flickering.
             return oldItem.status == newItem.status && 
-                   oldItem.remainingMs == newItem.remainingMs &&
-                   (oldItem.name != null ? oldItem.name.equals(newItem.name) : newItem.name == null);
+                   oldItem.name.equals(newItem.name) &&
+                   (oldItem.status == 1 || oldItem.remainingMs == newItem.remainingMs);
         }
     }
 }

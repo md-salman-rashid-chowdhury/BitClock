@@ -12,6 +12,9 @@ import androidx.lifecycle.ViewModelProvider;
 import com.salman.bitclock.R;
 import com.salman.bitclock.data.models.Timer;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class TimerEditActivity extends AppCompatActivity {
 
     private EditText timerNameInput;

@@ -7,7 +7,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.widget.Button;
+import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -29,7 +29,6 @@ import com.salman.bitclock.R;
 import com.salman.bitclock.data.models.Alarm;
 import com.salman.bitclock.utils.AlarmScheduler;
 
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -59,7 +58,7 @@ public class AlarmDetailActivity extends AppCompatActivity {
     private MaterialToolbar toolbar;
 
     private int currentAlarmId = -1;
-    private Set<Integer> selectedDays = new HashSet<>();
+    private Set<Integer> selectedDayBits = new HashSet<>();
     private int selectedSnoozeMinutes = 10;
     private Uri selectedSoundUri;
 
@@ -137,12 +136,17 @@ public class AlarmDetailActivity extends AppCompatActivity {
     private void setupDayChips() {
         for (int i = 0; i < chipGroupRepeatDays.getChildCount(); i++) {
             Chip chip = (Chip) chipGroupRepeatDays.getChildAt(i);
-            int day = i + 1; // 1=Sun, 2=Mon, ...
+            // Chip order: Sun(0), Mon(1), Tue(2), Wed(3), Thu(4), Fri(5), Sat(6)
+            // Bitmask order: Mon(0), Tue(1), Wed(2), Thu(3), Fri(4), Sat(5), Sun(6)
+            final int bit;
+            if (i == 0) bit = 6; // Sun
+            else bit = i - 1; // Mon=0, Tue=1...
+            
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    selectedDays.add(day);
+                    selectedDayBits.add(bit);
                 } else {
-                    selectedDays.remove(day);
+                    selectedDayBits.remove(bit);
                 }
             });
         }
@@ -226,8 +230,14 @@ public class AlarmDetailActivity extends AppCompatActivity {
                 int repeatDaysBitmask = alarm.getRepeatDays();
                 for (int i = 0; i < 7; i++) {
                     Chip chip = (Chip) chipGroupRepeatDays.getChildAt(i);
-                    if ((repeatDaysBitmask & (1 << i)) != 0) {
+                    int bit;
+                    if (i == 0) bit = 6; // Sun
+                    else bit = i - 1; // Mon=0, Tue=1...
+                    
+                    if ((repeatDaysBitmask & (1 << bit)) != 0) {
                         chip.setChecked(true);
+                    } else {
+                        chip.setChecked(false);
                     }
                 }
             }
@@ -257,8 +267,8 @@ public class AlarmDetailActivity extends AppCompatActivity {
         alarm.setSoundUri(selectedSoundUri != null ? selectedSoundUri.toString() : "");
         
         int repeatDaysBitmask = 0;
-        for (Integer day : selectedDays) {
-            repeatDaysBitmask |= (1 << (day - 1));
+        for (Integer bit : selectedDayBits) {
+            repeatDaysBitmask |= (1 << bit);
         }
         alarm.setRepeatDays(repeatDaysBitmask);
 
