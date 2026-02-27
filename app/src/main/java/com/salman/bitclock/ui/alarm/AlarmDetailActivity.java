@@ -277,10 +277,6 @@ public class AlarmDetailActivity extends AppCompatActivity {
             }
         }
 
-        Intent intent = new Intent(this, PresentationActivity.class);
-        intent.putExtra(EXTRA_ALARM_ID, alarm.getId());
-        startActivity(intent);
-
         Toast.makeText(this, "Alarm saved!", Toast.LENGTH_SHORT).show();
     }
 }

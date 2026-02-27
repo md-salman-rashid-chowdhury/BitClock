@@ -53,7 +53,10 @@ public class AlarmViewModel extends ViewModel {
     public Future<Long> insert(Alarm alarm) {
         Callable<Long> insertCallable = () -> {
             alarmRepository.insert(alarm);
-            return 0L;
+            // Since alarmRepository.insert doesn't return ID directly yet, 
+            // and we need it for immediate scheduling in some flows.
+            // Note: AlarmRepository.insert uses an internal executor.
+            return (long) alarm.getId();
         };
         return executorService.submit(insertCallable);
     }

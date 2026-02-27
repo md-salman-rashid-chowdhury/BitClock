@@ -71,7 +71,7 @@ public class TimerFragment extends Fragment {
 
         timerViewModel.getAllTimers().observe(getViewLifecycleOwner(), timers -> {
             if (timers != null) {
-                adapter.setTimers(timers);
+                adapter.submitList(timers);
             }
         });
     }

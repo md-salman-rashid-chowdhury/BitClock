@@ -70,8 +70,12 @@ public class AlarmRingingService extends Service {
                 .setFullScreenIntent(fullScreenPendingIntent, true)
                 .build();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Technically Q introduced types, but specialUse is API 34+
+            // For older versions we just use 0 or relevant type if it existed
+            startForeground(NOTIFICATION_ID, notification);
         } else {
             startForeground(NOTIFICATION_ID, notification);
         }

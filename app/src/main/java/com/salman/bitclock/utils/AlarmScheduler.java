@@ -23,15 +23,21 @@ public class AlarmScheduler {
         this.alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
     }
 
+    public boolean canScheduleExactAlarms() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            return alarmManager != null && alarmManager.canScheduleExactAlarms();
+        }
+        return true;
+    }
+
     public void scheduleAlarm(Alarm alarm) {
         if (alarmManager == null) {
             Log.e(TAG, "AlarmManager is null");
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
+        if (!canScheduleExactAlarms()) {
             Log.w(TAG, "Cannot schedule exact alarms. App needs SCHEDULE_EXACT_ALARM permission.");
-            // The UI layer is responsible for handling permission requests and user feedback.
             return;
         }
 
@@ -42,7 +48,6 @@ public class AlarmScheduler {
         AlarmManager.AlarmClockInfo alarmClockInfo = new AlarmManager.AlarmClockInfo(triggerTime, getMainActivityPendingIntent());
 
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent);
-        // **FIX:** Removed the Toast message that was causing a crash on background threads.
     }
 
     public void cancelAlarm(int alarmId) {

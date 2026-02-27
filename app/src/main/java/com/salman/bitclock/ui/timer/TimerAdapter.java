@@ -8,19 +8,22 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.salman.bitclock.R;
 import com.salman.bitclock.data.models.Timer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHolder> {
+public class TimerAdapter extends ListAdapter<Timer, TimerAdapter.TimerViewHolder> {
 
-    private List<Timer> timers = new ArrayList<>();
     private OnTimerInteractionListener listener;
+
+    public TimerAdapter() {
+        super(new TimerDiffCallback());
+    }
 
     @NonNull
     @Override
@@ -32,23 +35,13 @@ public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHol
 
     @Override
     public void onBindViewHolder(@NonNull TimerViewHolder holder, int position) {
-        holder.bind(timers.get(position));
+        holder.bind(getItem(position));
     }
 
     @Override
     public void onViewRecycled(@NonNull TimerViewHolder holder) {
         super.onViewRecycled(holder);
         holder.cancelTimer();
-    }
-
-    @Override
-    public int getItemCount() {
-        return timers.size();
-    }
-
-    public void setTimers(List<Timer> timers) {
-        this.timers = timers;
-        notifyDataSetChanged();
     }
 
     public interface OnTimerInteractionListener {
@@ -125,6 +118,20 @@ public class TimerAdapter extends RecyclerView.Adapter<TimerAdapter.TimerViewHol
             long minutes = (time / (1000 * 60)) % 60;
             long hours = (time / (1000 * 60 * 60)) % 24;
             return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+        }
+    }
+
+    private static class TimerDiffCallback extends DiffUtil.ItemCallback<Timer> {
+        @Override
+        public boolean areItemsTheSame(@NonNull Timer oldItem, @NonNull Timer newItem) {
+            return oldItem.id == newItem.id;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Timer oldItem, @NonNull Timer newItem) {
+            return oldItem.status == newItem.status && 
+                   oldItem.remainingMs == newItem.remainingMs &&
+                   (oldItem.name != null ? oldItem.name.equals(newItem.name) : newItem.name == null);
         }
     }
 }
