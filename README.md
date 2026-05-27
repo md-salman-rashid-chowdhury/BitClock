@@ -1,4 +1,4 @@
-# BitClock # Alarm App
+# BitClock  Alarm App
 A simple alarm application built with Java, XML and SQLite.
 This project introduced me to mobile development 
 and led me to pursue Flutter seriously.
