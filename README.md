@@ -1,2 +1,2 @@
 # BitClock
-A java based time managemet  Alarm App , Native app for android &lt; <br> Author: Md. Salman Rashid Chowdhury.
+A native Android alarm & time management app built with Java and XML.
