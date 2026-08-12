@@ -7,6 +7,8 @@ import com.salman.bitclock.data.models.Timer;
 import com.salman.bitclock.data.repository.TimerRepository;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -17,6 +19,7 @@ public class TimerViewModel extends ViewModel {
 
     private final TimerRepository repository;
     private final LiveData<List<Timer>> allTimers;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     @Inject
     public TimerViewModel(TimerRepository repository) {
@@ -29,14 +32,14 @@ public class TimerViewModel extends ViewModel {
     }
 
     public void insert(Timer timer) {
-        repository.insert(timer);
+        executorService.execute(() -> repository.insert(timer));
     }
 
     public void update(Timer timer) {
-        repository.update(timer);
+        executorService.execute(() -> repository.update(timer));
     }
 
     public void delete(Timer timer) {
-        repository.delete(timer);
+        executorService.execute(() -> repository.delete(timer));
     }
 }

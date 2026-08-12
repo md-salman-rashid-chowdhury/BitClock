@@ -1,24 +1,24 @@
 package com.salman.bitclock.data;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
  * Central state manager for the app.
- * Uses a HashMap to store and retrieve application data and settings in-memory.
+ * Uses a ConcurrentHashMap to store and retrieve application data and settings in-memory,
+ * ensuring thread safety across repository operations.
  */
 @Singleton
 public class AppStateManager {
 
-    // HashMap to store any kind of app data (Alarms, Timers, Settings)
-    // Key: String identifier, Value: Object (the data)
+    // Thread-safe map to store app data
     private final Map<String, Object> dataStore;
 
     @Inject
     public AppStateManager() {
-        this.dataStore = new HashMap<>();
+        this.dataStore = new ConcurrentHashMap<>();
     }
 
     /**

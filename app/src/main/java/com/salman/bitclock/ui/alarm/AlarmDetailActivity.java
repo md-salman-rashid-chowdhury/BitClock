@@ -275,18 +275,25 @@ public class AlarmDetailActivity extends AppCompatActivity {
         if (currentAlarmId != -1) {
             alarmViewModel.update(alarm);
             alarmScheduler.scheduleAlarm(alarm);
+            Toast.makeText(this, "Alarm updated!", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            try {
-                long newId = alarmViewModel.insert(alarm).get();
-                alarm.setId((int) newId);
-                alarmScheduler.scheduleAlarm(alarm);
-                finish();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            // Asynchronously insert to avoid blocking the UI thread
+            new Thread(() -> {
+                try {
+                    long newId = alarmViewModel.insert(alarm).get();
+                    alarm.setId((int) newId);
+                    
+                    runOnUiThread(() -> {
+                        alarmScheduler.scheduleAlarm(alarm);
+                        Toast.makeText(this, "Alarm saved!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } catch (ExecutionException | InterruptedException e) {
+                    runOnUiThread(() -> Toast.makeText(this, "Error saving alarm", Toast.LENGTH_SHORT).show());
+                    e.printStackTrace();
+                }
+            }).start();
         }
-
-        Toast.makeText(this, "Alarm saved!", Toast.LENGTH_SHORT).show();
     }
 }

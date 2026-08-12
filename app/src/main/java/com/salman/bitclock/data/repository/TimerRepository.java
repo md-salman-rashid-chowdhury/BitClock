@@ -5,8 +5,6 @@ import com.salman.bitclock.data.AppStateManager;
 import com.salman.bitclock.data.database.TimerDao;
 import com.salman.bitclock.data.models.Timer;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -19,7 +17,6 @@ public class TimerRepository {
 
     private final TimerDao timerDao;
     private final AppStateManager stateManager;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
     // Key for storing timers in the HashMap
     private static final String TIMERS_KEY = "timers_list";
@@ -53,29 +50,23 @@ public class TimerRepository {
      * Inserts a new timer and clears the cache to ensure data consistency.
      */
     public void insert(Timer timer) {
-        executorService.execute(() -> {
-            timerDao.insert(timer);
-            stateManager.removeData(TIMERS_KEY); // Invalidate cache
-        });
+        timerDao.insert(timer);
+        stateManager.removeData(TIMERS_KEY); // Invalidate cache
     }
 
     /**
      * Updates an existing timer and clears the cache.
      */
     public void update(Timer timer) {
-        executorService.execute(() -> {
-            timerDao.update(timer);
-            stateManager.removeData(TIMERS_KEY); // Invalidate cache
-        });
+        timerDao.update(timer);
+        stateManager.removeData(TIMERS_KEY); // Invalidate cache
     }
 
     /**
      * Deletes a timer and clears the cache.
      */
     public void delete(Timer timer) {
-        executorService.execute(() -> {
-            timerDao.delete(timer);
-            stateManager.removeData(TIMERS_KEY); // Invalidate cache
-        });
+        timerDao.delete(timer);
+        stateManager.removeData(TIMERS_KEY); // Invalidate cache
     }
 }

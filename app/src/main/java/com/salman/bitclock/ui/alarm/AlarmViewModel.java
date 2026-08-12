@@ -7,7 +7,6 @@ import com.salman.bitclock.data.models.Alarm;
 import com.salman.bitclock.data.repository.AlarmRepository;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -51,35 +50,26 @@ public class AlarmViewModel extends ViewModel {
      * Inserts a new alarm and returns a Future with the result ID.
      */
     public Future<Long> insert(Alarm alarm) {
-        Callable<Long> insertCallable = () -> {
-            alarmRepository.insert(alarm);
-            // Since alarmRepository.insert doesn't return ID directly yet, 
-            // and we need it for immediate scheduling in some flows.
-            // Note: AlarmRepository.insert uses an internal executor.
-            return (long) alarm.getId();
-        };
-        return executorService.submit(insertCallable);
+        return executorService.submit(() -> alarmRepository.insert(alarm));
     }
 
     /**
      * Updates an existing alarm.
      */
     public Future<Void> update(Alarm alarm) {
-        Callable<Void> updateCallable = () -> {
+        return executorService.submit(() -> {
             alarmRepository.update(alarm);
             return null;
-        };
-        return executorService.submit(updateCallable);
+        });
     }
 
     /**
      * Deletes an alarm.
      */
     public Future<Void> delete(Alarm alarm) {
-        Callable<Void> deleteCallable = () -> {
+        return executorService.submit(() -> {
             alarmRepository.delete(alarm);
             return null;
-        };
-        return executorService.submit(deleteCallable);
+        });
     }
 }

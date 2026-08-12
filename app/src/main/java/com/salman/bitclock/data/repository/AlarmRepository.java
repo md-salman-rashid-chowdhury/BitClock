@@ -5,8 +5,6 @@ import com.salman.bitclock.data.AppStateManager;
 import com.salman.bitclock.data.database.AlarmDao;
 import com.salman.bitclock.data.models.Alarm;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -20,7 +18,6 @@ public class AlarmRepository {
 
     private final AlarmDao alarmDao;
     private final AppStateManager stateManager;
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     
     // Key for in-memory cache
     private static final String ALARMS_KEY = "alarms_list";
@@ -59,26 +56,22 @@ public class AlarmRepository {
 
     /**
      * Saves data and clears the memory cache.
+     * Synchronous to allow callers to manage threading and capture the generated ID.
      */
-    public void insert(Alarm alarm) {
-        executorService.execute(() -> {
-            alarmDao.insert(alarm);
-            stateManager.removeData(ALARMS_KEY);
-        });
+    public long insert(Alarm alarm) {
+        long id = alarmDao.insert(alarm);
+        stateManager.removeData(ALARMS_KEY);
+        return id;
     }
 
     public void update(Alarm alarm) {
-        executorService.execute(() -> {
-            alarmDao.update(alarm);
-            stateManager.removeData(ALARMS_KEY);
-        });
+        alarmDao.update(alarm);
+        stateManager.removeData(ALARMS_KEY);
     }
 
     public void delete(Alarm alarm) {
-        executorService.execute(() -> {
-            alarmDao.delete(alarm);
-            stateManager.removeData(ALARMS_KEY);
-        });
+        alarmDao.delete(alarm);
+        stateManager.removeData(ALARMS_KEY);
     }
 
     public Alarm getAlarmByIdSync(int id) {
