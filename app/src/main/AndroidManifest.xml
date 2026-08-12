@@ -34,7 +34,7 @@
         <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.BitClock.Splash"
+            android:theme="@style/Theme.App.Starting"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,24 +44,13 @@
 
         <!-- Other Activities -->
         <activity
-            android:name=".ui.alarm.AlarmDetailActivity"
-            android:parentActivityName=".MainActivity" />
-
-        <activity
-            android:name=".ui.alarm.AlarmEditActivity"
-            android:parentActivityName=".MainActivity" />
-
-        <activity
-            android:name=".ui.timer.TimerEditActivity"
-            android:parentActivityName=".MainActivity" />
-
-        <activity
             android:name=".ui.alarm.AlarmRingingActivity"
             android:excludeFromRecents="true"
             android:launchMode="singleTask"
             android:showOnLockScreen="true"
             android:taskAffinity=""
-            android:turnScreenOn="true" />
+            android:turnScreenOn="true"
+            android:exported="false" />
 
         <!-- Receivers -->
         <receiver
