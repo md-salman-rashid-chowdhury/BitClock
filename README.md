@@ -10,6 +10,7 @@ This application demonstrates the cutting edge of Android development (MAD - Mod
 - **Reactive Architecture**: Implements **MVVM** with **Kotlin Flow** and **StateFlow**, ensuring the UI is always a perfect reflection of the underlying data.
 - **Pure Kotlin**: 100% Kotlin codebase, utilizing Coroutines for asynchronous operations and KSP for optimized code generation.
 - **Premium Startup**: Modern **Splash Screen API** integration with high-quality vector adaptive icons.
+- **DevOps Integrated**: Automated CI/CD pipeline using **GitHub Actions** for linting, building, and artifact generation.
 
 ## 🚀 Key Features
 
@@ -33,6 +34,7 @@ This application demonstrates the cutting edge of Android development (MAD - Mod
 - **Reliability First**: Prioritizes system triggers during Doze mode for guaranteed alarm delivery.
 - **Performance**: Zero-java overhead and KSP-optimized processing for faster build times and runtime execution.
 - **Modern DI**: Full Hilt integration extending to EntryPoints for non-composable components (Receivers/Services).
+- **Clean Structure**: Standardized **`src/main/kotlin`** directory structure, following pure Kotlin development standards.
 
 ## 📥 Installation
 
