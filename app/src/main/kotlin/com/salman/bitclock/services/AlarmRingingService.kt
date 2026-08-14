@@ -1,6 +1,5 @@
 package com.salman.bitclock.services
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,6 +9,7 @@ import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.net.Uri
+import androidx.core.net.toUri
 import android.os.Build
 import android.os.IBinder
 import android.os.VibrationEffect
@@ -54,12 +54,14 @@ class AlarmRingingService : Service() {
     }
 
     private fun startAlarmSound(uriString: String?) {
-        val uri = uriString?.let { Uri.parse(it) } ?: Settings.System.DEFAULT_ALARM_ALERT_URI
+        val uri = uriString?.toUri() ?: Settings.System.DEFAULT_ALARM_ALERT_URI
         mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_ALARM)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build())
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ALARM)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build(),
+            )
             try {
                 setDataSource(this@AlarmRingingService, uri)
                 isLooping = true
@@ -72,11 +74,12 @@ class AlarmRingingService : Service() {
     }
 
     private fun startVibration() {
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as? Vibrator
         val pattern = longArrayOf(0, 500, 1000)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))
         } else {
+            @Suppress("DEPRECATION")
             vibrator?.vibrate(pattern, 0)
         }
     }

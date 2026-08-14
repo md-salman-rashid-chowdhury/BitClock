@@ -15,7 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmViewModel @Inject constructor(
     private val repository: AlarmRepository,
-    private val scheduler: AlarmScheduler
+    private val scheduler: AlarmScheduler,
 ) : ViewModel() {
 
     val alarms: StateFlow<List<Alarm>> = repository.getAllAlarms()

@@ -1,46 +1,47 @@
 # BitClock 🕒
 
-BitClock is a feature-rich, high-performance native Android alarm and time management application. Built with a focus on reliability and modern architectural patterns, it demonstrates advanced Android development concepts including Dependency Injection, reactive persistence, and optimized background processing.
+BitClock is a high-performance, modern native Android alarm and time management application. This project has undergone a complete architectural evolution, transitioning from a legacy Java/XML foundation to a 100% **Kotlin** and **Jetpack Compose** powerhouse.
+
+## 💎 Modernization Showcase
+
+This application demonstrates the cutting edge of Android development (MAD - Modern Android Development):
+
+- **Declarative UI**: Built entirely with **Jetpack Compose** and **Material Design 3**, eliminating XML layouts for a fluid, state-driven user experience.
+- **Reactive Architecture**: Implements **MVVM** with **Kotlin Flow** and **StateFlow**, ensuring the UI is always a perfect reflection of the underlying data.
+- **Pure Kotlin**: 100% Kotlin codebase, utilizing Coroutines for asynchronous operations and KSP for optimized code generation.
+- **Premium Startup**: Modern **Splash Screen API** integration with high-quality vector adaptive icons.
 
 ## 🚀 Key Features
 
-- **Reliable Alarms**: Precise scheduling using `AlarmManager` with specialized handling for Android 12+ exact alarm permissions.
-- **Persistent Storage**: Robust data management with **Room Database** for alarms and timers.
-- **Smart Ringing**: Foreground service with full-screen intent support, ensuring alarms trigger even when the device is locked.
-- **Time Management Suite**: Includes a Stopwatch with lap tracking, a customizable Timer, and a World Clock.
-- **Material 3 UI**: Clean, adaptive interface following the latest Material Design guidelines.
+- **Reliable Alarms**: Precise scheduling using `AlarmManager.setAlarmClock()` with robust handling for Android 12+ exact alarm permissions.
+- **Persistent Storage**: Reactive data management with **Room Database** generating pure Kotlin code.
+- **Smart Ringing**: Robust foreground service with full-screen intent support, ensuring alarms trigger even when the device is locked.
+- **Time Management Suite**: Features a real-time World Clock, customizable Timer, and a reactive Stopwatch.
 
-## 🛠 Tech Stack & Architecture
+## 🛠 Tech Stack
 
-- **Language**: Java 17
-- **Architecture**: MVVM (Model-View-ViewModel) with Repository Pattern.
-- **Dependency Injection**: **Hilt** for clean, decoupled code and easier testing.
-- **Local Persistence**: **Room** (SQLite) for structured, reactive data storage.
-- **UI Components**: ViewBinding, Navigation Component, ConstraintLayout, and Material 3.
-- **Optimization**: Custom `AppStateManager` cache layer to minimize disk I/O and CPU overhead.
-- **Background Work**: BroadcastReceivers and Foreground Services for critical alarm reliability.
+- **Language**: Kotlin 2.1.10
+- **UI Framework**: Jetpack Compose (Material 3)
+- **Dependency Injection**: Hilt
+- **Persistence**: Room (KSP)
+- **Concurrency**: Kotlin Coroutines & Flow
+- **Architecture**: MVVM + Repository Pattern
+- **Asset Management**: Modern Vector Adaptive Icons
 
 ## 🏗 Technical Highlights
 
-- **Reliability First**: Implements `setAlarmClock` API to ensure alarms are prioritized by the system even during Doze mode.
-- **Modern DI**: Full Hilt integration from Application class to ViewModels and non-Hilt components (using EntryPoints).
-- **Reactive UI**: Leveraging `LiveData` for real-time UI updates when the database state changes.
-- **Adaptive Design**: Designed to be responsive across different screen sizes and Android versions (minSdk 26).
+- **Reliability First**: Prioritizes system triggers during Doze mode for guaranteed alarm delivery.
+- **Performance**: Zero-java overhead and KSP-optimized processing for faster build times and runtime execution.
+- **Modern DI**: Full Hilt integration extending to EntryPoints for non-composable components (Receivers/Services).
 
 ## 📥 Installation
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/BitClock.git
+   git clone https://github.com/md-salman-rashid-chowdhury/BitClock.git
    ```
 2. Open the project in **Android Studio (Ladybug or newer)**.
-3. Build the project and run it on an emulator or physical device (Android 8.0+).
-
-## 📈 Future Roadmap
-
-- [ ] Implementation of a "Sleep Tracking" module.
-- [ ] Integration with Wear OS for remote alarm control.
-- [ ] Migration to Kotlin and Jetpack Compose.
+3. Build and run (minSdk 26).
 
 ---
-*Developed as a showcase of native Android engineering excellence.*
+*Rebuilt with excellence to showcase modern Android engineering.*

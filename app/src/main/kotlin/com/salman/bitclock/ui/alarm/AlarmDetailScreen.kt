@@ -60,12 +60,14 @@ fun AlarmDetailScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Edit Time (Mock)", style = MaterialTheme.typography.headlineSmall)
-            Row {
-                NumberPicker(value = hour, onValueChange = { hour = it }, range = 0..23, label = "Hour")
-                Spacer(Modifier.width(16.dp))
-                NumberPicker(value = minute, onValueChange = { minute = it }, range = 0..59, label = "Minute")
-            }
+            // Modern Material 3 Time Picker
+            val timePickerState = rememberTimePickerState(
+                initialHour = hour,
+                initialMinute = minute,
+                is24Hour = false
+            )
+
+            TimePicker(state = timePickerState)
 
             Spacer(Modifier.height(24.dp))
             
@@ -83,18 +85,12 @@ fun AlarmDetailScreen(
                 Text("Vibrate", modifier = Modifier.weight(1f))
                 Switch(checked = isVibrate, onCheckedChange = { isVibrate = it })
             }
-        }
-    }
-}
 
-@Composable
-fun NumberPicker(value: Int, onValueChange: (Int) -> Unit, range: IntRange, label: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(label, style = MaterialTheme.typography.labelSmall)
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Button(onClick = { if (value > range.first) onValueChange(value - 1) }) { Text("-") }
-            Text(value.toString(), modifier = Modifier.padding(horizontal = 8.dp), style = MaterialTheme.typography.bodyLarge)
-            Button(onClick = { if (value < range.last) onValueChange(value + 1) }) { Text("+") }
+            // Update local state when picker changes (for saving)
+            LaunchedEffect(timePickerState.hour, timePickerState.minute) {
+                hour = timePickerState.hour
+                minute = timePickerState.minute
+            }
         }
     }
 }

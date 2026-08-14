@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.salman.bitclock.data.models.Alarm
 import com.salman.bitclock.data.models.Timer
 
-@Database(entities = [Alarm::class, Timer::class], version = 1, exportSchema = false)
+@Database(entities = [Alarm::class, Timer::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun alarmDao(): AlarmDao
@@ -23,7 +23,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "bitclock_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }
