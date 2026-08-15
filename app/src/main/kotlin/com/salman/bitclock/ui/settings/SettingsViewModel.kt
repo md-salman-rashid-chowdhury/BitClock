@@ -9,7 +9,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val secureStorage: SecureStorageManager
+    private val secureStorage: SecureStorageManager,
+    private val backupManager: com.salman.bitclock.data.BackupManager,
+    private val syncRepository: com.salman.bitclock.data.repository.SyncRepository
 ) : ViewModel() {
 
     private val ACCOUNTABILITY_CONTACT_KEY = "master_accountability_contact"
@@ -22,5 +24,17 @@ class SettingsViewModel @Inject constructor(
     fun updateAccountabilityContact(contact: String) {
         _accountabilityContact.value = contact
         secureStorage.saveString(ACCOUNTABILITY_CONTACT_KEY, contact)
+    }
+
+    suspend fun exportBackup(): String {
+        return backupManager.exportData()
+    }
+
+    suspend fun importBackup(json: String) {
+        backupManager.importData(json)
+    }
+
+    suspend fun syncWithCloud(): Boolean {
+        return syncRepository.uploadToCloud()
     }
 }

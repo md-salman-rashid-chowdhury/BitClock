@@ -20,4 +20,7 @@ interface ProfileDao {
 
     @Query("SELECT * FROM alarm_profiles WHERE id = :profileId")
     suspend fun getProfileById(profileId: Int): AlarmProfile?
+
+    @Query("SELECT * FROM alarm_profiles")
+    suspend fun getAllProfilesSync(): List<AlarmProfile>
 }

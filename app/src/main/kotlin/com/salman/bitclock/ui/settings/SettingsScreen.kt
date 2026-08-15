@@ -1,5 +1,7 @@
 package com.salman.bitclock.ui.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -11,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,6 +26,37 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
     val accountabilityContact by viewModel.accountabilityContact.collectAsState()
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var showImportConfirm by remember { mutableStateOf(false) }
+    var pendingImportJson by remember { mutableStateOf("") }
+
+    val exportLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        uri?.let {
+            scope.launch {
+                val json = viewModel.exportBackup()
+                context.contentResolver.openOutputStream(it)?.use { stream ->
+                    stream.write(json.toByteArray())
+                }
+            }
+        }
+    }
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            scope.launch {
+                context.contentResolver.openInputStream(it)?.use { stream ->
+                    val json = stream.readBytes().decodeToString()
+                    pendingImportJson = json
+                    showImportConfirm = true
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -70,11 +105,54 @@ fun SettingsScreen(
             Text("Cloud & Data", style = MaterialTheme.typography.titleMedium)
             
             SettingsItem(
-                title = "Backup & Restore",
-                description = "Cloud sync (Coming soon)",
+                title = "Export Backup",
+                description = "Save your alarms and settings to a JSON file.",
+                icon = Icons.Default.CloudDownload,
+                onClick = { exportLauncher.launch("BitClock_Backup.json") }
+            )
+
+            SettingsItem(
+                title = "Import Backup",
+                description = "Restore alarms and settings from a JSON file.",
                 icon = Icons.Default.CloudUpload,
-                onClick = { /* Placeholder */ },
-                enabled = false
+                onClick = { importLauncher.launch(arrayOf("application/json")) }
+            )
+
+            SettingsItem(
+                title = "Cloud Sync",
+                description = "Securely sync data with BitClock Cloud.",
+                icon = Icons.Default.Sync,
+                onClick = {
+                    scope.launch {
+                        val success = viewModel.syncWithCloud()
+                        if (success) {
+                            // Show success message
+                        }
+                    }
+                }
+            )
+        }
+
+        if (showImportConfirm) {
+            AlertDialog(
+                onDismissRequest = { showImportConfirm = false },
+                title = { Text("Confirm Import") },
+                text = { Text("Importing data will overwrite all current alarms and settings. This cannot be undone.") },
+                confirmButton = {
+                    Button(onClick = {
+                        scope.launch {
+                            viewModel.importBackup(pendingImportJson)
+                            showImportConfirm = false
+                        }
+                    }) {
+                        Text("Import")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showImportConfirm = false }) {
+                        Text("Cancel")
+                    }
+                }
             )
         }
     }

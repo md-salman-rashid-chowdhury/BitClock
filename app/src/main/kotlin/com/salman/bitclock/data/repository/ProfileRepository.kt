@@ -12,6 +12,8 @@ class ProfileRepository @Inject constructor(
 ) {
     fun getAllProfiles(): Flow<List<AlarmProfile>> = profileDao.getAllProfiles()
 
+    suspend fun getAllProfilesSync(): List<AlarmProfile> = profileDao.getAllProfilesSync()
+
     suspend fun insertProfile(profile: AlarmProfile) = profileDao.insert(profile)
 
     suspend fun updateProfile(profile: AlarmProfile) = profileDao.update(profile)

@@ -86,7 +86,10 @@ data class Alarm(
     val adaptiveDifficultyEnabled: Boolean = false,
 
     @ColumnInfo(name = "dismissal_history_count")
-    val dismissalHistoryCount: Int = 0
+    val dismissalHistoryCount: Int = 0,
+
+    @ColumnInfo(name = "last_modified")
+    val lastModified: Long = System.currentTimeMillis()
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 

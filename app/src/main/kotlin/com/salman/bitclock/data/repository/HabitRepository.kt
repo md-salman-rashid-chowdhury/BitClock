@@ -14,6 +14,8 @@ class HabitRepository @Inject constructor(
 
     suspend fun insertHabit(habit: Habit) = habitDao.insert(habit)
 
+    suspend fun getAllHabitsSync(): List<Habit> = habitDao.getAllHabitsSync()
+
     suspend fun updateHabit(habit: Habit) = habitDao.update(habit)
 
     suspend fun deleteHabit(habit: Habit) = habitDao.delete(habit)

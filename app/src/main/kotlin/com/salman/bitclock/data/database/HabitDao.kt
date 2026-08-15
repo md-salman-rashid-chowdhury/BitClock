@@ -20,4 +20,7 @@ interface HabitDao {
 
     @Query("SELECT * FROM habits WHERE alarm_id = :alarmId")
     suspend fun getHabitsForAlarmSync(alarmId: Int): List<Habit>
+
+    @Query("SELECT * FROM habits")
+    suspend fun getAllHabitsSync(): List<Habit>
 }

@@ -62,6 +62,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideGson(): com.google.gson.Gson = com.google.gson.Gson()
+
+    @Provides
+    @Singleton
     fun provideAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
         return AlarmScheduler(context)
     }
