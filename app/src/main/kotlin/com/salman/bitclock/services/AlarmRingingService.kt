@@ -42,6 +42,9 @@ class AlarmRingingService : Service() {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setCategory(NotificationCompat.CATEGORY_ALARM)
             .setFullScreenIntent(pendingIntent, true)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOngoing(true)
+            .setAutoCancel(false)
             .build()
 
         startForeground(1, notification)
@@ -73,7 +76,7 @@ class AlarmRingingService : Service() {
     }
 
     private fun startVibration() {
-        val vibrator = getSystemService(VIBRATOR_SERVICE) as? Vibrator
+        vibrator = getSystemService(VIBRATOR_SERVICE) as? Vibrator
         val pattern = longArrayOf(0, 500, 1000)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             vibrator?.vibrate(VibrationEffect.createWaveform(pattern, 0))

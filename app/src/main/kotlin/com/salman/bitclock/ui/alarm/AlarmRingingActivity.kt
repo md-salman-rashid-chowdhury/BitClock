@@ -1,5 +1,6 @@
 package com.salman.bitclock.ui.alarm
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.salman.bitclock.services.AlarmRingingService
 import com.salman.bitclock.ui.theme.BitClockTheme
 
 class AlarmRingingActivity : ComponentActivity() {
@@ -20,12 +22,16 @@ class AlarmRingingActivity : ComponentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            val keyguardManager = getSystemService(android.app.KeyguardManager::class.java)
+            keyguardManager?.requestDismissKeyguard(this, null)
         } else {
             window.addFlags(
                 WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                         or WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
                         or WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                         or WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+                        or WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON
             )
         }
 
@@ -33,7 +39,13 @@ class AlarmRingingActivity : ComponentActivity() {
 
         setContent {
             BitClockTheme {
-                AlarmRingingScreen(label = label, onDismiss = { finishAndRemoveTask() })
+                AlarmRingingScreen(
+                    label = label,
+                    onDismiss = {
+                        stopService(Intent(this@AlarmRingingActivity, AlarmRingingService::class.java))
+                        finishAndRemoveTask()
+                    }
+                )
             }
         }
     }
