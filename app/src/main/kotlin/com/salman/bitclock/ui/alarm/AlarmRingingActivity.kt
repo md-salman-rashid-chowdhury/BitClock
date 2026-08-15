@@ -120,7 +120,22 @@ class AlarmRingingActivity : ComponentActivity() {
             if (alarmId != -1) {
                 val alarm = repository.getAlarmByIdSync(alarmId)
                 if (alarm != null) {
-                    repository.update(alarm.copy(snoozeCount = 0))
+                    var newDifficulty = alarm.missionDifficulty
+                    var newHistoryCount = alarm.dismissalHistoryCount
+                    
+                    if (alarm.adaptiveDifficultyEnabled) {
+                        newHistoryCount++
+                        if (newHistoryCount >= 3 && newDifficulty < 3) {
+                            newDifficulty++
+                            newHistoryCount = 0
+                        }
+                    }
+                    
+                    repository.update(alarm.copy(
+                        snoozeCount = 0,
+                        missionDifficulty = newDifficulty,
+                        dismissalHistoryCount = newHistoryCount
+                    ))
                 }
                 WorkManager.getInstance(applicationContext).cancelUniqueWork("accountability_$alarmId")
             }

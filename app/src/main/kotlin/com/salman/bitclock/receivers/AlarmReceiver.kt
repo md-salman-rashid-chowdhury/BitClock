@@ -23,39 +23,67 @@ class AlarmReceiver : BroadcastReceiver() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onReceive(context: Context, intent: Intent?) {
-        if (intent?.action == "com.salman.bitclock.ALARM_TRIGGER") {
-            val alarmId = intent.getIntExtra("ALARM_ID", -1)
-            if (alarmId == -1) return
+        val action = intent?.action
+        if (action == "com.salman.bitclock.ALARM_TRIGGER") {
+            handleAlarmTrigger(context, intent)
+        } else if (action == "com.salman.bitclock.PRE_ALARM_TRIGGER") {
+            handlePreAlarmTrigger(context, intent)
+        }
+    }
 
-            val pendingResult = goAsync()
-            val entryPoint = EntryPointAccessors.fromApplication(
-                context.applicationContext, AppModule.AlarmRepositoryEntryPoint::class.java
-            )
-            val repository = entryPoint.alarmRepository()
-            val scheduler = AlarmScheduler(context)
+    private fun handleAlarmTrigger(context: Context, intent: Intent) {
+        val alarmId = intent.getIntExtra("ALARM_ID", -1)
+        if (alarmId == -1) return
 
-            scope.launch {
-                try {
-                    val alarm = repository.getAlarmByIdSync(alarmId)
-                    if (alarm != null && alarm.isEnabled) {
-                        startAlarmService(context, alarm)
-                        
-                        // Schedule accountability worker if contact is set
-                        if (!alarm.accountabilityContact.isNullOrBlank()) {
-                            scheduleAccountabilityWorker(context, alarm)
-                        }
+        val pendingResult = goAsync()
+        val entryPoint = EntryPointAccessors.fromApplication(
+            context.applicationContext, AppModule.AlarmRepositoryEntryPoint::class.java
+        )
+        val repository = entryPoint.alarmRepository()
+        val scheduler = AlarmScheduler(context)
 
-                        if (alarm.isRepeating()) {
-                            scheduler.scheduleAlarm(alarm)
-                        } else {
-                            repository.update(alarm.copy(isEnabled = false))
-                        }
+        scope.launch {
+            try {
+                val alarm = repository.getAlarmByIdSync(alarmId)
+                if (alarm != null && alarm.isEnabled) {
+                    startAlarmService(context, alarm)
+                    
+                    // Schedule accountability worker if contact is set
+                    if (!alarm.accountabilityContact.isNullOrBlank()) {
+                        scheduleAccountabilityWorker(context, alarm)
                     }
-                } finally {
-                    pendingResult.finish()
+
+                    if (alarm.isRepeating()) {
+                        scheduler.scheduleAlarm(alarm)
+                    } else {
+                        repository.update(alarm.copy(isEnabled = false))
+                    }
                 }
+            } finally {
+                pendingResult.finish()
             }
         }
+    }
+
+    private fun handlePreAlarmTrigger(context: Context, intent: Intent) {
+        val alarmId = intent.getIntExtra("ALARM_ID", -1)
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val channelId = "pre_alarm_channel"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = android.app.NotificationChannel(channelId, "Pre-Alarm Alerts", android.app.NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notification = androidx.core.app.NotificationCompat.Builder(context, channelId)
+            .setContentTitle("Gentle Wake Up")
+            .setContentText("Your alarm will ring soon.")
+            .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
+            .setVibrate(longArrayOf(0, 500, 1000, 500))
+            .setPriority(androidx.core.app.NotificationCompat.PRIORITY_HIGH)
+            .build()
+
+        notificationManager.notify(alarmId + 200000, notification)
     }
 
     private fun scheduleAccountabilityWorker(context: Context, alarm: com.salman.bitclock.data.models.Alarm) {

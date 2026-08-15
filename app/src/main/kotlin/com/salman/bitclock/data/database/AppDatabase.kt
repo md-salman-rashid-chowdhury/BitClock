@@ -10,8 +10,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.salman.bitclock.data.models.*
 
 @Database(
-    entities = [Alarm::class, Timer::class, WorldClock::class, SleepSession::class, Habit::class, AlarmProfile::class],
-    version = 6,
+    entities = [Alarm::class, Timer::class, WorldClock::class, SleepSession::class, Habit::class, AlarmProfile::class, AuditLog::class],
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(Converters::class)
@@ -23,6 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun sleepDao(): SleepDao
     abstract fun habitDao(): HabitDao
     abstract fun profileDao(): ProfileDao
+    abstract fun auditLogDao(): AuditLogDao
 
     companion object {
         @Volatile
@@ -62,13 +63,11 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Update alarms table with Phase 5 fields
                 db.execSQL("ALTER TABLE alarms ADD COLUMN has_habit_checklist INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE alarms ADD COLUMN profile_id INTEGER")
                 db.execSQL("ALTER TABLE alarms ADD COLUMN accountability_contact TEXT")
                 db.execSQL("ALTER TABLE alarms ADD COLUMN accountability_delay INTEGER NOT NULL DEFAULT 10")
 
-                // Create habits table
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS habits (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -79,12 +78,38 @@ abstract class AppDatabase : RoomDatabase() {
                     )
                 """.trimIndent())
 
-                // Create alarm_profiles table
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS alarm_profiles (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                         name TEXT NOT NULL,
                         is_active INTEGER NOT NULL DEFAULT 1
+                    )
+                """.trimIndent())
+            }
+        }
+
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE alarms ADD COLUMN pre_alarm_enabled INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN pre_alarm_minutes INTEGER NOT NULL DEFAULT 5")
+            }
+        }
+
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE alarms ADD COLUMN adaptive_difficulty INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN dismissal_history_count INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS audit_logs (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        timestamp INTEGER NOT NULL,
+                        action TEXT NOT NULL,
+                        details TEXT NOT NULL
                     )
                 """.trimIndent())
             }
@@ -97,7 +122,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "bitclock_database"
                 )
-                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                 .build()
                 INSTANCE = instance
                 instance

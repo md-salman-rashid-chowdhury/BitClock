@@ -24,7 +24,28 @@ class AlarmScheduler(private val context: Context) {
     }
 
     fun scheduleAlarm(alarm: Alarm) {
-        scheduleAlarmAtTime(alarm.id, alarm.getNextAlarmTime(), alarm.label)
+        val triggerTime = alarm.getNextAlarmTime()
+        scheduleAlarmAtTime(alarm.id, triggerTime, alarm.label)
+        
+        if (alarm.preAlarmEnabled) {
+            val preAlarmTime = triggerTime - (alarm.preAlarmMinutes * 60 * 1000)
+            if (preAlarmTime > System.currentTimeMillis()) {
+                schedulePreAlarm(alarm.id, preAlarmTime)
+            }
+        }
+    }
+
+    private fun schedulePreAlarm(alarmId: Int, triggerTime: Long) {
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            action = "com.salman.bitclock.PRE_ALARM_TRIGGER"
+            putExtra("ALARM_ID", alarmId)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context, alarmId + 100000, intent, // Unique request code for pre-alarm
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerTime, getMainActivityPendingIntent())
+        alarmManager?.setAlarmClock(alarmClockInfo, pendingIntent)
     }
 
     fun scheduleAlarmAtTime(alarmId: Int, triggerTime: Long, label: String) {

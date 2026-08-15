@@ -58,6 +58,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAuditLogDao(database: AppDatabase): com.salman.bitclock.data.database.AuditLogDao = database.auditLogDao()
+
+    @Provides
+    @Singleton
     fun provideAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
         return AlarmScheduler(context)
     }

@@ -74,7 +74,19 @@ data class Alarm(
     val accountabilityContact: String? = null,
 
     @ColumnInfo(name = "accountability_delay")
-    val accountabilityDelayMinutes: Int = 10
+    val accountabilityDelayMinutes: Int = 10,
+
+    @ColumnInfo(name = "pre_alarm_enabled")
+    val preAlarmEnabled: Boolean = false,
+
+    @ColumnInfo(name = "pre_alarm_minutes")
+    val preAlarmMinutes: Int = 5,
+
+    @ColumnInfo(name = "adaptive_difficulty")
+    val adaptiveDifficultyEnabled: Boolean = false,
+
+    @ColumnInfo(name = "dismissal_history_count")
+    val dismissalHistoryCount: Int = 0
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 

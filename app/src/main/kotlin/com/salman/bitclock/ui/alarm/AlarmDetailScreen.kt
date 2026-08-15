@@ -40,6 +40,9 @@ fun AlarmDetailScreen(
     var smartWakeWindow by remember { mutableIntStateOf(existingAlarm?.smartWakeWindowMinutes ?: 20) }
     var accountabilityContact by remember { mutableStateOf(existingAlarm?.accountabilityContact ?: "") }
     var accountabilityDelay by remember { mutableIntStateOf(existingAlarm?.accountabilityDelayMinutes ?: 10) }
+    var preAlarmEnabled by remember { mutableStateOf(existingAlarm?.preAlarmEnabled ?: false) }
+    var preAlarmMinutes by remember { mutableIntStateOf(existingAlarm?.preAlarmMinutes ?: 5) }
+    var adaptiveDifficultyEnabled by remember { mutableStateOf(existingAlarm?.adaptiveDifficultyEnabled ?: false) }
 
     Scaffold(
         topBar = {
@@ -66,7 +69,10 @@ fun AlarmDetailScreen(
                                     smartWakeEnabled = smartWakeEnabled,
                                     smartWakeWindowMinutes = smartWakeWindow,
                                     accountabilityContact = accountabilityContact.ifBlank { null },
-                                    accountabilityDelayMinutes = accountabilityDelay
+                                    accountabilityDelayMinutes = accountabilityDelay,
+                                    preAlarmEnabled = preAlarmEnabled,
+                                    preAlarmMinutes = preAlarmMinutes,
+                                    adaptiveDifficultyEnabled = adaptiveDifficultyEnabled
                                 )
                             )
                         } else {
@@ -84,7 +90,10 @@ fun AlarmDetailScreen(
                                         smartWakeEnabled = smartWakeEnabled,
                                         smartWakeWindowMinutes = smartWakeWindow,
                                         accountabilityContact = accountabilityContact.ifBlank { null },
-                                        accountabilityDelayMinutes = accountabilityDelay
+                                        accountabilityDelayMinutes = accountabilityDelay,
+                                        preAlarmEnabled = preAlarmEnabled,
+                                        preAlarmMinutes = preAlarmMinutes,
+                                        adaptiveDifficultyEnabled = adaptiveDifficultyEnabled
                                     )
                                 )
                             }
@@ -150,57 +159,24 @@ fun AlarmDetailScreen(
 
             HorizontalDivider()
 
-            if (alarmId != null) {
-                Text("Morning Habits", style = MaterialTheme.typography.titleMedium)
-                val habits by viewModel.getHabitsForAlarm(alarmId).collectAsState(initial = emptyList())
-                var newHabitName by remember { mutableStateOf("") }
-
-                habits.forEach { habit ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = habit.name, modifier = Modifier.weight(1f))
-                        IconButton(onClick = { viewModel.deleteHabit(habit) }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Delete Habit")
-                        }
-                    }
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedTextField(
-                        value = newHabitName,
-                        onValueChange = { newHabitName = it },
-                        label = { Text("New Habit") },
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = {
-                        if (newHabitName.isNotBlank()) {
-                            viewModel.addHabit(Habit(alarmId = alarmId, name = newHabitName))
-                            newHabitName = ""
-                        }
-                    }) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Habit")
-                    }
-                }
-                
-                HorizontalDivider()
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Pre-Alarm", modifier = Modifier.weight(1f))
+                Switch(checked = preAlarmEnabled, onCheckedChange = { preAlarmEnabled = it })
             }
 
-            Text("Shared Accountability", style = MaterialTheme.typography.titleMedium)
-            OutlinedTextField(
-                value = accountabilityContact,
-                onValueChange = { accountabilityContact = it },
-                label = { Text("Contact (Email or Phone)") },
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = { Text("Notified if alarm isn't dismissed.") }
-            )
-            
-            if (accountabilityContact.isNotBlank()) {
-                Text("Delay: $accountabilityDelay min")
+            if (preAlarmEnabled) {
+                Text("Pre-Alarm: $preAlarmMinutes min before")
                 Slider(
-                    value = accountabilityDelay.toFloat(),
-                    onValueChange = { accountabilityDelay = it.toInt() },
-                    valueRange = 1f..30f,
-                    steps = 29
+                    value = preAlarmMinutes.toFloat(),
+                    onValueChange = { preAlarmMinutes = it.toInt() },
+                    valueRange = 1f..15f,
+                    steps = 14
                 )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Adaptive Difficulty", modifier = Modifier.weight(1f))
+                Switch(checked = adaptiveDifficultyEnabled, onCheckedChange = { adaptiveDifficultyEnabled = it })
             }
 
             HorizontalDivider()
@@ -237,6 +213,127 @@ fun AlarmDetailScreen(
                 }
                 
                 HorizontalDivider()
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Pre-Alarm", modifier = Modifier.weight(1f))
+                Switch(checked = preAlarmEnabled, onCheckedChange = { preAlarmEnabled = it })
+            }
+
+            if (preAlarmEnabled) {
+                Text("Pre-Alarm: $preAlarmMinutes min before")
+                Slider(
+                    value = preAlarmMinutes.toFloat(),
+                    onValueChange = { preAlarmMinutes = it.toInt() },
+                    valueRange = 1f..15f,
+                    steps = 14
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Adaptive Difficulty", modifier = Modifier.weight(1f))
+                Switch(checked = adaptiveDifficultyEnabled, onCheckedChange = { adaptiveDifficultyEnabled = it })
+            }
+
+            HorizontalDivider()
+            }
+
+            Text("Shared Accountability", style = MaterialTheme.typography.titleMedium)
+            OutlinedTextField(
+                value = accountabilityContact,
+                onValueChange = { accountabilityContact = it },
+                label = { Text("Contact (Email or Phone)") },
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = { Text("Notified if alarm isn't dismissed.") }
+            )
+            
+            if (accountabilityContact.isNotBlank()) {
+                Text("Delay: $accountabilityDelay min")
+                Slider(
+                    value = accountabilityDelay.toFloat(),
+                    onValueChange = { accountabilityDelay = it.toInt() },
+                    valueRange = 1f..30f,
+                    steps = 29
+                )
+            }
+
+            HorizontalDivider()
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Pre-Alarm", modifier = Modifier.weight(1f))
+                Switch(checked = preAlarmEnabled, onCheckedChange = { preAlarmEnabled = it })
+            }
+
+            if (preAlarmEnabled) {
+                Text("Pre-Alarm: $preAlarmMinutes min before")
+                Slider(
+                    value = preAlarmMinutes.toFloat(),
+                    onValueChange = { preAlarmMinutes = it.toInt() },
+                    valueRange = 1f..15f,
+                    steps = 14
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Adaptive Difficulty", modifier = Modifier.weight(1f))
+                Switch(checked = adaptiveDifficultyEnabled, onCheckedChange = { adaptiveDifficultyEnabled = it })
+            }
+
+            HorizontalDivider()
+
+            if (alarmId != null) {
+                Text("Morning Habits", style = MaterialTheme.typography.titleMedium)
+                val habits by viewModel.getHabitsForAlarm(alarmId).collectAsState(initial = emptyList())
+                var newHabitName by remember { mutableStateOf("") }
+
+                habits.forEach { habit ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = habit.name, modifier = Modifier.weight(1f))
+                        IconButton(onClick = { viewModel.deleteHabit(habit) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Habit")
+                        }
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = newHabitName,
+                        onValueChange = { newHabitName = it },
+                        label = { Text("New Habit") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        if (newHabitName.isNotBlank()) {
+                            viewModel.addHabit(Habit(alarmId = alarmId, name = newHabitName))
+                            newHabitName = ""
+                        }
+                    }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Habit")
+                    }
+                }
+                
+                HorizontalDivider()
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Pre-Alarm", modifier = Modifier.weight(1f))
+                Switch(checked = preAlarmEnabled, onCheckedChange = { preAlarmEnabled = it })
+            }
+
+            if (preAlarmEnabled) {
+                Text("Pre-Alarm: $preAlarmMinutes min before")
+                Slider(
+                    value = preAlarmMinutes.toFloat(),
+                    onValueChange = { preAlarmMinutes = it.toInt() },
+                    valueRange = 1f..15f,
+                    steps = 14
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Adaptive Difficulty", modifier = Modifier.weight(1f))
+                Switch(checked = adaptiveDifficultyEnabled, onCheckedChange = { adaptiveDifficultyEnabled = it })
+            }
+
+            HorizontalDivider()
             }
 
             Text("Mission", style = MaterialTheme.typography.titleMedium)
