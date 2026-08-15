@@ -20,8 +20,13 @@ class AlarmViewModel @Inject constructor(
     private val repository: AlarmRepository,
     private val scheduler: AlarmScheduler,
     private val habitRepository: HabitRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val secureStorage: com.salman.bitclock.utils.SecureStorageManager
 ) : ViewModel() {
+
+    fun getDefaultAccountabilityContact(): String {
+        return secureStorage.getString("master_accountability_contact") ?: ""
+    }
 
     val alarms: StateFlow<List<Alarm>> = repository.getAllAlarms()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

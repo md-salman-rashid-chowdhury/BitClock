@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -24,6 +25,8 @@ import com.salman.bitclock.ui.alarm.AlarmScreen
 import com.salman.bitclock.ui.clock.ClockScreen
 import com.salman.bitclock.ui.diagnostic.DiagnosticScreen
 import com.salman.bitclock.ui.profiles.ProfileManagementScreen
+import com.salman.bitclock.ui.settings.AuditLogScreen
+import com.salman.bitclock.ui.settings.SettingsScreen
 import com.salman.bitclock.ui.sleep.SleepSummaryScreen
 import com.salman.bitclock.ui.stopwatch.StopwatchScreen
 import com.salman.bitclock.ui.timer.TimerScreen
@@ -36,8 +39,7 @@ fun MainScreen() {
         Screen.Clock,
         Screen.Sleep,
         Screen.Profiles,
-        Screen.Timer,
-        Screen.Stopwatch
+        Screen.Settings
     )
 
     Scaffold(
@@ -97,8 +99,17 @@ fun MainScreen() {
             composable(Screen.Profiles.route) { ProfileManagementScreen() }
             composable(Screen.Timer.route) { TimerScreen() }
             composable(Screen.Stopwatch.route) { StopwatchScreen() }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    onNavigateToDiagnostic = { navController.navigate(Screen.Diagnostic.route) },
+                    onNavigateToAuditLog = { navController.navigate("audit_log") }
+                )
+            }
             composable(Screen.Diagnostic.route) {
                 DiagnosticScreen(onBack = { navController.popBackStack() })
+            }
+            composable("audit_log") {
+                AuditLogScreen(onBack = { navController.popBackStack() })
             }
         }
     }
@@ -109,6 +120,7 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Clock : Screen("clock", "Clock", Icons.Default.Schedule)
     object Sleep : Screen("sleep", "Sleep", Icons.Default.Bed)
     object Profiles : Screen("profiles", "Profiles", Icons.Default.Groups)
+    object Settings : Screen("settings", "Settings", Icons.Default.Settings)
     object Timer : Screen("timer", "Timer", Icons.Default.Timer)
     object Stopwatch : Screen("stopwatch", "Stopwatch", Icons.Default.History)
     object Diagnostic : Screen("diagnostic", "Diagnostic", Icons.Default.BugReport)

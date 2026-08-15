@@ -46,6 +46,9 @@ class AlarmRingingActivity : ComponentActivity() {
     @Inject
     lateinit var habitRepository: HabitRepository
 
+    @Inject
+    lateinit var auditLogRepository: com.salman.bitclock.data.repository.AuditLogRepository
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (!hasFocus) {
@@ -86,6 +89,10 @@ class AlarmRingingActivity : ComponentActivity() {
         val snoozeCount = intent.getIntExtra("SNOOZE_COUNT", 0)
         val snoozeLimit = intent.getIntExtra("SNOOZE_LIMIT", 3)
         val snoozeMinutes = intent.getIntExtra("SNOOZE_MINUTES", 10)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            auditLogRepository.insertLog("Alarm Started", "Alarm '$label' started ringing.")
+        }
 
         setContent {
             val habits by if (alarmId != -1) {
@@ -136,6 +143,7 @@ class AlarmRingingActivity : ComponentActivity() {
                         missionDifficulty = newDifficulty,
                         dismissalHistoryCount = newHistoryCount
                     ))
+                    auditLogRepository.insertLog("Alarm Dismissed", "Alarm '$label' dismissed successfully.")
                 }
                 WorkManager.getInstance(applicationContext).cancelUniqueWork("accountability_$alarmId")
             }

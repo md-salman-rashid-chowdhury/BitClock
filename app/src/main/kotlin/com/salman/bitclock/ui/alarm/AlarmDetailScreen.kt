@@ -38,7 +38,9 @@ fun AlarmDetailScreen(
     var snoozeLimit by remember { mutableIntStateOf(existingAlarm?.snoozeLimit ?: 3) }
     var smartWakeEnabled by remember { mutableStateOf(existingAlarm?.smartWakeEnabled ?: false) }
     var smartWakeWindow by remember { mutableIntStateOf(existingAlarm?.smartWakeWindowMinutes ?: 20) }
-    var accountabilityContact by remember { mutableStateOf(existingAlarm?.accountabilityContact ?: "") }
+    var accountabilityContact by remember { 
+        mutableStateOf(existingAlarm?.accountabilityContact ?: viewModel.getDefaultAccountabilityContact()) 
+    }
     var accountabilityDelay by remember { mutableIntStateOf(existingAlarm?.accountabilityDelayMinutes ?: 10) }
     var preAlarmEnabled by remember { mutableStateOf(existingAlarm?.preAlarmEnabled ?: false) }
     var preAlarmMinutes by remember { mutableIntStateOf(existingAlarm?.preAlarmMinutes ?: 5) }
