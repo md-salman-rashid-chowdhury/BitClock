@@ -33,6 +33,8 @@ fun AlarmDetailScreen(
     var missionDifficulty by remember { mutableIntStateOf(existingAlarm?.missionDifficulty ?: 1) }
     var missionTarget by remember { mutableStateOf(existingAlarm?.missionTarget ?: "") }
     var snoozeLimit by remember { mutableIntStateOf(existingAlarm?.snoozeLimit ?: 3) }
+    var smartWakeEnabled by remember { mutableStateOf(existingAlarm?.smartWakeEnabled ?: false) }
+    var smartWakeWindow by remember { mutableIntStateOf(existingAlarm?.smartWakeWindowMinutes ?: 20) }
 
     Scaffold(
         topBar = {
@@ -55,7 +57,9 @@ fun AlarmDetailScreen(
                                     missionType = missionType,
                                     missionDifficulty = missionDifficulty,
                                     missionTarget = missionTarget,
-                                    snoozeLimit = snoozeLimit
+                                    snoozeLimit = snoozeLimit,
+                                    smartWakeEnabled = smartWakeEnabled,
+                                    smartWakeWindowMinutes = smartWakeWindow
                                 )
                             )
                         } else {
@@ -69,7 +73,9 @@ fun AlarmDetailScreen(
                                         missionType = missionType,
                                         missionDifficulty = missionDifficulty,
                                         missionTarget = missionTarget,
-                                        snoozeLimit = snoozeLimit
+                                        snoozeLimit = snoozeLimit,
+                                        smartWakeEnabled = smartWakeEnabled,
+                                        smartWakeWindowMinutes = smartWakeWindow
                                     )
                                 )
                             }
@@ -116,6 +122,21 @@ fun AlarmDetailScreen(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text("Snooze Limit (0 for infinite)", modifier = Modifier.weight(1f))
                 NumberPicker(value = snoozeLimit, onValueChange = { snoozeLimit = it }, range = 0..10, label = "")
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Smart Wake", modifier = Modifier.weight(1f))
+                Switch(checked = smartWakeEnabled, onCheckedChange = { smartWakeEnabled = it })
+            }
+
+            if (smartWakeEnabled) {
+                Text("Smart Wake Window: $smartWakeWindow min")
+                Slider(
+                    value = smartWakeWindow.toFloat(),
+                    onValueChange = { smartWakeWindow = it.toInt() },
+                    valueRange = 10f..60f,
+                    steps = 10
+                )
             }
 
             HorizontalDivider()

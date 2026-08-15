@@ -8,16 +8,18 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.salman.bitclock.data.models.Alarm
+import com.salman.bitclock.data.models.SleepSession
 import com.salman.bitclock.data.models.Timer
 import com.salman.bitclock.data.models.WorldClock
 
-@Database(entities = [Alarm::class, Timer::class, WorldClock::class], version = 4, exportSchema = false)
+@Database(entities = [Alarm::class, Timer::class, WorldClock::class, SleepSession::class], version = 5, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun alarmDao(): AlarmDao
     abstract fun timerDao(): TimerDao
     abstract fun worldClockDao(): WorldClockDao
+    abstract fun sleepDao(): SleepDao
 
     companion object {
         @Volatile
@@ -38,6 +40,25 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Add new columns to alarms table
+                db.execSQL("ALTER TABLE alarms ADD COLUMN smart_wake_enabled INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN smart_wake_window INTEGER NOT NULL DEFAULT 20")
+                
+                // Create sleep_sessions table
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS sleep_sessions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        start_time INTEGER NOT NULL,
+                        end_time INTEGER NOT NULL,
+                        movement_data TEXT NOT NULL,
+                        wake_quality_score INTEGER NOT NULL
+                    )
+                """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -45,7 +66,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "bitclock_database"
                 )
-                .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                 .build()
                 INSTANCE = instance
                 instance

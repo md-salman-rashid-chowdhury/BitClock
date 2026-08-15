@@ -17,11 +17,24 @@ import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.salman.bitclock.ui.alarm.AlarmRingingActivity
+import kotlinx.coroutines.*
 import java.io.IOException
 
 class AlarmRingingService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var vibrator: Vibrator? = null
+    private var volumeLevel = 0f
+    private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    private fun startVolumeRamp() {
+        serviceScope.launch {
+            while (volumeLevel < 1f) {
+                volumeLevel += 0.05f
+                mediaPlayer?.setVolume(volumeLevel, volumeLevel)
+                delay(2000)
+            }
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val label = intent?.getStringExtra("ALARM_LABEL") ?: "Alarm"
@@ -74,8 +87,12 @@ class AlarmRingingService : Service() {
             try {
                 setDataSource(this@AlarmRingingService, uri)
                 isLooping = true
+                setVolume(0f, 0f)
                 prepareAsync()
-                setOnPreparedListener { start() }
+                setOnPreparedListener { 
+                    start()
+                    startVolumeRamp()
+                }
             } catch (e: IOException) {
                 Log.e("AlarmRingingService", "Failed to play sound", e)
             }
@@ -98,6 +115,7 @@ class AlarmRingingService : Service() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         vibrator?.cancel()
+        serviceScope.cancel()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

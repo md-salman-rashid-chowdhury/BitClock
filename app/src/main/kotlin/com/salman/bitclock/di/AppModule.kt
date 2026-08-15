@@ -46,6 +46,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideSleepDao(database: AppDatabase): com.salman.bitclock.data.database.SleepDao = database.sleepDao()
+
+    @Provides
+    @Singleton
     fun provideAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
         return AlarmScheduler(context)
     }

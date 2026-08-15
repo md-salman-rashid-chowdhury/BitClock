@@ -56,7 +56,13 @@ data class Alarm(
     val snoozeLimit: Int = 3, // 0 for infinite, -1 for blocked
 
     @ColumnInfo(name = "snooze_count")
-    val snoozeCount: Int = 0
+    val snoozeCount: Int = 0,
+
+    @ColumnInfo(name = "smart_wake_enabled")
+    val smartWakeEnabled: Boolean = false,
+
+    @ColumnInfo(name = "smart_wake_window")
+    val smartWakeWindowMinutes: Int = 20
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 

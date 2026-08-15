@@ -94,6 +94,15 @@
                 android:value="timer" />
         </service>
 
+        <service
+            android:name=".services.SleepTrackerService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="sleep_tracking" />
+        </service>
+
     </application>
 
 </manifest>

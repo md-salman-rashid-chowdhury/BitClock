@@ -20,6 +20,7 @@ import com.salman.bitclock.ui.alarm.missions.MathMission
 import com.salman.bitclock.ui.alarm.missions.ShakeMission
 import com.salman.bitclock.ui.theme.BitClockTheme
 import com.salman.bitclock.utils.AlarmScheduler
+import com.salman.bitclock.utils.VoiceBriefingManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +36,9 @@ class AlarmRingingActivity : ComponentActivity() {
     
     @Inject
     lateinit var scheduler: AlarmScheduler
+
+    @Inject
+    lateinit var voiceBriefingManager: VoiceBriefingManager
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
@@ -89,7 +93,7 @@ class AlarmRingingActivity : ComponentActivity() {
                     snoozeCount = snoozeCount,
                     snoozeLimit = snoozeLimit,
                     onDismiss = {
-                        dismissAlarm(alarmId)
+                        dismissAlarm(alarmId, label)
                     },
                     onSnooze = {
                         snoozeAlarm(alarmId, snoozeCount, snoozeMinutes)
@@ -99,8 +103,9 @@ class AlarmRingingActivity : ComponentActivity() {
         }
     }
 
-    private fun dismissAlarm(alarmId: Int) {
+    private fun dismissAlarm(alarmId: Int, label: String) {
         CoroutineScope(Dispatchers.IO).launch {
+            voiceBriefingManager.speakBriefing(label)
             if (alarmId != -1) {
                 val alarm = repository.getAlarmByIdSync(alarmId)
                 if (alarm != null) {
@@ -108,6 +113,8 @@ class AlarmRingingActivity : ComponentActivity() {
                 }
             }
             stopService(Intent(this@AlarmRingingActivity, AlarmRingingService::class.java))
+            // Give TTS some time to start before finishing activity if needed, 
+            // though TTS runs in its own process/service usually.
             finishAndRemoveTask()
         }
     }
