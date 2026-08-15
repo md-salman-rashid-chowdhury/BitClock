@@ -3,6 +3,7 @@ package com.salman.bitclock.ui
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Timer
@@ -19,8 +20,9 @@ import androidx.navigation.navArgument
 import com.salman.bitclock.ui.alarm.AlarmDetailScreen
 import com.salman.bitclock.ui.alarm.AlarmScreen
 import com.salman.bitclock.ui.clock.ClockScreen
-import com.salman.bitclock.ui.timer.TimerScreen
+import com.salman.bitclock.ui.diagnostic.DiagnosticScreen
 import com.salman.bitclock.ui.stopwatch.StopwatchScreen
+import com.salman.bitclock.ui.timer.TimerScreen
 
 @Composable
 fun MainScreen() {
@@ -67,7 +69,8 @@ fun MainScreen() {
             composable(Screen.Alarm.route) { 
                 AlarmScreen(
                     onAddAlarm = { navController.navigate("alarm_detail") },
-                    onEditAlarm = { id -> navController.navigate("alarm_detail?id=$id") }
+                    onEditAlarm = { id -> navController.navigate("alarm_detail?id=$id") },
+                    onOpenDiagnostic = { navController.navigate(Screen.Diagnostic.route) }
                 ) 
             }
             composable(
@@ -86,6 +89,9 @@ fun MainScreen() {
             composable(Screen.Clock.route) { ClockScreen() }
             composable(Screen.Timer.route) { TimerScreen() }
             composable(Screen.Stopwatch.route) { StopwatchScreen() }
+            composable(Screen.Diagnostic.route) {
+                DiagnosticScreen(onBack = { navController.popBackStack() })
+            }
         }
     }
 }
@@ -95,4 +101,5 @@ sealed class Screen(val route: String, val title: String, val icon: ImageVector)
     object Clock : Screen("clock", "Clock", Icons.Default.Schedule)
     object Timer : Screen("timer", "Timer", Icons.Default.Timer)
     object Stopwatch : Screen("stopwatch", "Stopwatch", Icons.Default.History)
+    object Diagnostic : Screen("diagnostic", "Diagnostic", Icons.Default.BugReport)
 }

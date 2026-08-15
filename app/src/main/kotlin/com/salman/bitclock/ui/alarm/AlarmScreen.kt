@@ -19,12 +19,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.salman.bitclock.data.models.Alarm
 import kotlinx.coroutines.launch
 import java.util.Locale
+import androidx.compose.material.icons.filled.BugReport
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmScreen(
     onAddAlarm: () -> Unit,
     onEditAlarm: (Int) -> Unit,
+    onOpenDiagnostic: () -> Unit,
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val alarms by viewModel.alarms.collectAsState()
@@ -32,6 +34,16 @@ fun AlarmScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Alarms") },
+                actions = {
+                    IconButton(onClick = onOpenDiagnostic) {
+                        Icon(Icons.Default.BugReport, contentDescription = "Diagnostics")
+                    }
+                }
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(

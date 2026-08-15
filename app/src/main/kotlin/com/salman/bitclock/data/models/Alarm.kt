@@ -3,68 +3,90 @@ package com.salman.bitclock.data.models
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.util.Calendar
+import java.time.LocalDateTime
+import java.time.ZoneId
+
+enum class MissionType {
+    NONE, MATH, SHAKE, BARCODE
+}
 
 @Entity(tableName = "alarms")
 data class Alarm(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Int = 0,
-    
+
     @ColumnInfo(name = "hour")
     val hour: Int,
-    
+
     @ColumnInfo(name = "minute")
     val minute: Int,
-    
+
     @ColumnInfo(name = "is_enabled")
     val isEnabled: Boolean = true,
-    
+
     @ColumnInfo(name = "label")
     val label: String = "",
-    
+
     @ColumnInfo(name = "repeat_days")
-    val repeatDays: Int = 0, // Bitmask for repeating days
-    
+    val repeatDays: Int = 0, // Bitmask for repeating days (Mon=1, Tue=2, ..., Sun=64)
+
     @ColumnInfo(name = "snooze_duration")
     val snoozeMinutes: Int = 10,
-    
+
     @ColumnInfo(name = "sound_uri")
     val soundUri: String = "",
-    
+
     @ColumnInfo(name = "vibrate")
     val isVibrate: Boolean = true,
-    
+
     @ColumnInfo(name = "created_at")
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+
+    @ColumnInfo(name = "mission_type")
+    val missionType: MissionType = MissionType.NONE,
+
+    @ColumnInfo(name = "mission_difficulty")
+    val missionDifficulty: Int = 1,
+
+    @ColumnInfo(name = "mission_target")
+    val missionTarget: String = ""
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 
+    /**
+     * Calculates the next trigger time for this alarm in milliseconds.
+     * Uses java.time APIs for DST-safe calculation.
+     */
     fun getNextAlarmTime(): Long {
-        val calendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
+        val now = LocalDateTime.now()
+        var scheduledTime = now.withHour(hour)
+            .withMinute(minute)
+            .withSecond(0)
+            .withNano(0)
 
-        if (calendar.timeInMillis <= System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
+        // If the scheduled time is in the past, move to tomorrow
+        if (scheduledTime.isBefore(now) || scheduledTime.isEqual(now)) {
+            scheduledTime = scheduledTime.plusDays(1)
         }
 
         if (!isRepeating()) {
-            return calendar.timeInMillis
+            return scheduledTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
         }
 
+        // For repeating alarms, find the next active day
         for (i in 0 until 7) {
-            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) // SUNDAY = 1, MONDAY = 2, ...
-            val dayBit = 1 shl ((dayOfWeek + 5) % 7) // Convert to Mon-Sun bitmask
+            // DayOfWeek is 1 (Monday) to 7 (Sunday)
+            val dayOfWeek = scheduledTime.dayOfWeek.value
+            val dayBit = 1 shl (dayOfWeek - 1)
 
             if ((repeatDays and dayBit) != 0) {
-                return calendar.timeInMillis
+                return scheduledTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
             }
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            scheduledTime = scheduledTime.plusDays(1)
         }
-        return 0 // Should not happen
+
+        // Fallback to the first occurrence if something goes wrong
+        return scheduledTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
     }
 }

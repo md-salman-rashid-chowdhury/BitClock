@@ -23,10 +23,8 @@ class MainActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            checkExactAlarmPermission()
-        }
+    ) { _ ->
+        // Permissions are now handled JIT or via Diagnostic screen
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,37 +36,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             BitClockTheme {
                 MainScreen()
-            }
-        }
-
-        checkAndRequestPermissions()
-    }
-
-    private fun checkAndRequestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                checkExactAlarmPermission()
-            }
-        } else {
-            checkExactAlarmPermission()
-        }
-    }
-
-    private fun checkExactAlarmPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val scheduler = AlarmScheduler(this)
-            if (!scheduler.canScheduleExactAlarms()) {
-                val intent = Intent().apply {
-                    action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    data = Uri.fromParts("package", packageName, null)
-                }
-                startActivity(intent)
             }
         }
     }

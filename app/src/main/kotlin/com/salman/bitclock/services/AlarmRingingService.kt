@@ -32,6 +32,9 @@ class AlarmRingingService : Service() {
         val fullScreenIntent = Intent(this, AlarmRingingActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra("ALARM_LABEL", label)
+            putExtra("MISSION_TYPE", intent?.getStringExtra("MISSION_TYPE"))
+            putExtra("MISSION_DIFFICULTY", intent?.getIntExtra("MISSION_DIFFICULTY", 1))
+            putExtra("MISSION_TARGET", intent?.getStringExtra("MISSION_TARGET"))
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
