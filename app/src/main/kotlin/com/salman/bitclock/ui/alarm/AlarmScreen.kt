@@ -1,20 +1,26 @@
 package com.salman.bitclock.ui.alarm
 
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.salman.bitclock.data.models.Alarm
+import kotlinx.coroutines.launch
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlarmScreen(
     onAddAlarm: () -> Unit,
@@ -22,8 +28,11 @@ fun AlarmScreen(
     viewModel: AlarmViewModel = hiltViewModel()
 ) {
     val alarms by viewModel.alarms.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddAlarm,
@@ -56,11 +65,57 @@ fun AlarmScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(alarms, key = { it.id }) { alarm ->
-                    AlarmItem(
-                        alarm = alarm,
-                        onToggle = { enabled -> viewModel.toggleAlarm(alarm, enabled) },
-                        onClick = { onEditAlarm(alarm.id) }
+                    val dismissState = rememberSwipeToDismissBoxState(
+                        confirmValueChange = {
+                            if (it == SwipeToDismissBoxValue.EndToStart) {
+                                viewModel.deleteAlarm(alarm)
+                                scope.launch {
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Alarm deleted",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        viewModel.undoDelete()
+                                    }
+                                }
+                                true
+                            } else {
+                                false
+                            }
+                        }
                     )
+
+                    SwipeToDismissBox(
+                        state = dismissState,
+                        enableDismissFromStartToEnd = false,
+                        backgroundContent = {
+                            val color = when (dismissState.dismissDirection) {
+                                SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
+                                else -> Color.Transparent
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(vertical = 4.dp)
+                                    .background(color, MaterialTheme.shapes.medium),
+                                contentAlignment = Alignment.CenterEnd
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    tint = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
+                        }
+                    ) {
+                        AlarmItem(
+                            alarm = alarm,
+                            onToggle = { enabled -> viewModel.toggleAlarm(alarm, enabled) },
+                            onClick = { onEditAlarm(alarm.id) }
+                        )
+                    }
                 }
             }
         }

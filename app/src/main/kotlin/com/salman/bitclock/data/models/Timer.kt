@@ -20,5 +20,8 @@ data class Timer(
     val remainingMs: Long,
 
     @ColumnInfo(name = "status")
-    val status: Int = 0 // 0 = stopped, 1 = running
+    val status: Int = 0, // 0 = stopped, 1 = running
+
+    @ColumnInfo(name = "end_time")
+    val endTime: Long = 0
 )

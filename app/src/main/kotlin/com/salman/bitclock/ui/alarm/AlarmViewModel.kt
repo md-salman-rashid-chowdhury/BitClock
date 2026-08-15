@@ -37,6 +37,21 @@ class AlarmViewModel @Inject constructor(
         viewModelScope.launch {
             repository.delete(alarm)
             scheduler.cancelAlarm(alarm.id)
+            lastDeletedAlarm = alarm
+        }
+    }
+
+    private var lastDeletedAlarm: Alarm? = null
+
+    fun undoDelete() {
+        lastDeletedAlarm?.let { alarm ->
+            viewModelScope.launch {
+                repository.insert(alarm)
+                if (alarm.isEnabled) {
+                    scheduler.scheduleAlarm(alarm)
+                }
+                lastDeletedAlarm = null
+            }
         }
     }
 

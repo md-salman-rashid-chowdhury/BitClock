@@ -6,12 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.salman.bitclock.data.models.Alarm
 import com.salman.bitclock.data.models.Timer
+import com.salman.bitclock.data.models.WorldClock
 
-@Database(entities = [Alarm::class, Timer::class], version = 2, exportSchema = false)
+@Database(entities = [Alarm::class, Timer::class, WorldClock::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun alarmDao(): AlarmDao
     abstract fun timerDao(): TimerDao
+    abstract fun worldClockDao(): WorldClockDao
 
     companion object {
         @Volatile

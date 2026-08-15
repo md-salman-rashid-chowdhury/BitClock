@@ -57,7 +57,7 @@ class TimerService : Service() {
 
     private fun startTimer(timerId: Int) {
         serviceScope.launch {
-            val timers = timerRepository.getAllTimersSync()
+            val timers = timerRepository.getAllTimersCached()
             val timer = timers.find { it.id == timerId } ?: return@launch
             
             val updatedTimer = timer.copy(
@@ -88,7 +88,7 @@ class TimerService : Service() {
 
     private fun stopTimer(timerId: Int) {
         serviceScope.launch {
-            val timers = timerRepository.getAllTimersSync()
+            val timers = timerRepository.getAllTimersCached()
             val timer = timers.find { it.id == timerId } ?: return@launch
             
             val updatedTimer = timer.copy(status = 0, remainingMs = timer.initialDurationMs, endTime = 0)
@@ -123,7 +123,7 @@ class TimerService : Service() {
                     onTimerFinished(id)
                 }
             }
-            stopForeground(true)
+            stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
     }
@@ -131,7 +131,7 @@ class TimerService : Service() {
     private fun onTimerFinished(timerId: Int) {
         runningTimers.remove(timerId)
         serviceScope.launch {
-            val timers = timerRepository.getAllTimersSync()
+            val timers = timerRepository.getAllTimersCached()
             val timer = timers.find { it.id == timerId } ?: return@launch
             timerRepository.update(timer.copy(status = 0, remainingMs = 0, endTime = 0))
             
@@ -195,7 +195,7 @@ class TimerService : Service() {
     private fun checkToStopService() {
         if (runningTimers.isEmpty()) {
             updateJob?.cancel()
-            stopForeground(true)
+            stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
     }

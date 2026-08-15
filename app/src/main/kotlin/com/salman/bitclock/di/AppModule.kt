@@ -5,6 +5,7 @@ import android.content.Context
 import com.salman.bitclock.data.database.AlarmDao
 import com.salman.bitclock.data.database.AppDatabase
 import com.salman.bitclock.data.database.TimerDao
+import com.salman.bitclock.data.database.WorldClockDao
 import com.salman.bitclock.data.repository.AlarmRepository
 import com.salman.bitclock.utils.AlarmScheduler
 import dagger.Module
@@ -38,6 +39,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideTimerDao(database: AppDatabase): TimerDao = database.timerDao()
+
+    @Provides
+    @Singleton
+    fun provideWorldClockDao(database: AppDatabase): WorldClockDao = database.worldClockDao()
 
     @Provides
     @Singleton
