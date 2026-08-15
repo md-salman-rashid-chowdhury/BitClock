@@ -15,15 +15,17 @@ This application demonstrates the cutting edge of Android development (MAD - Mod
 
 - **Reliable Alarms**: Precise scheduling using `AlarmManager.setAlarmClock()` with robust handling for Android 12+ exact alarm permissions.
 - **Persistent Storage**: Reactive data management with **Room Database** generating pure Kotlin code.
-- **Smart Ringing**: Robust foreground service with full-screen intent support, ensuring alarms trigger even when the device is locked.
+- **Smart Ringing**: Robust foreground service with full-screen intent support, ensuring alarms trigger and remain dismissible even when the device is locked.
+- **Seamless Permissions**: Integrated runtime permission handling for Notifications (Android 13+) and Exact Alarms (Android 12+).
 - **Time Management Suite**: Features a real-time World Clock, customizable Timer, and a reactive Stopwatch.
 
 ## 🛠 Tech Stack
 
-- **Language**: Kotlin 2.1.10
+- **Language**: Kotlin 2.2.10
 - **UI Framework**: Jetpack Compose (Material 3)
-- **Dependency Injection**: Hilt
-- **Persistence**: Room (KSP)
+- **Dependency Injection**: Hilt 2.60.1
+- **Persistence**: Room 2.8.4 (KSP)
+- **SDK Support**: Target/Compile SDK 37
 - **Concurrency**: Kotlin Coroutines & Flow
 - **Architecture**: MVVM + Repository Pattern
 - **Asset Management**: Modern Vector Adaptive Icons
