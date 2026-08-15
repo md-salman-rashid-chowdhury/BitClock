@@ -32,6 +32,10 @@ class AlarmRingingService : Service() {
         val fullScreenIntent = Intent(this, AlarmRingingActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             putExtra("ALARM_LABEL", label)
+            putExtra("ALARM_ID", intent?.getIntExtra("ALARM_ID", -1))
+            putExtra("SNOOZE_COUNT", intent?.getIntExtra("SNOOZE_COUNT", 0))
+            putExtra("SNOOZE_LIMIT", intent?.getIntExtra("SNOOZE_LIMIT", 3))
+            putExtra("SNOOZE_MINUTES", intent?.getIntExtra("SNOOZE_MINUTES", 10))
             putExtra("MISSION_TYPE", intent?.getStringExtra("MISSION_TYPE"))
             putExtra("MISSION_DIFFICULTY", intent?.getIntExtra("MISSION_DIFFICULTY", 1))
             putExtra("MISSION_TARGET", intent?.getStringExtra("MISSION_TARGET"))

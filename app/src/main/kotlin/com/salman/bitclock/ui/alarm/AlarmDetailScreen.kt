@@ -31,6 +31,8 @@ fun AlarmDetailScreen(
     var isVibrate by remember { mutableStateOf(existingAlarm?.isVibrate ?: true) }
     var missionType by remember { mutableStateOf(existingAlarm?.missionType ?: MissionType.NONE) }
     var missionDifficulty by remember { mutableIntStateOf(existingAlarm?.missionDifficulty ?: 1) }
+    var missionTarget by remember { mutableStateOf(existingAlarm?.missionTarget ?: "") }
+    var snoozeLimit by remember { mutableIntStateOf(existingAlarm?.snoozeLimit ?: 3) }
 
     Scaffold(
         topBar = {
@@ -51,7 +53,9 @@ fun AlarmDetailScreen(
                                     label = label,
                                     isVibrate = isVibrate,
                                     missionType = missionType,
-                                    missionDifficulty = missionDifficulty
+                                    missionDifficulty = missionDifficulty,
+                                    missionTarget = missionTarget,
+                                    snoozeLimit = snoozeLimit
                                 )
                             )
                         } else {
@@ -63,7 +67,9 @@ fun AlarmDetailScreen(
                                         label = label,
                                         isVibrate = isVibrate,
                                         missionType = missionType,
-                                        missionDifficulty = missionDifficulty
+                                        missionDifficulty = missionDifficulty,
+                                        missionTarget = missionTarget,
+                                        snoozeLimit = snoozeLimit
                                     )
                                 )
                             }
@@ -107,6 +113,11 @@ fun AlarmDetailScreen(
                 Switch(checked = isVibrate, onCheckedChange = { isVibrate = it })
             }
 
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Snooze Limit (0 for infinite)", modifier = Modifier.weight(1f))
+                NumberPicker(value = snoozeLimit, onValueChange = { snoozeLimit = it }, range = 0..10, label = "")
+            }
+
             HorizontalDivider()
 
             Text("Mission", style = MaterialTheme.typography.titleMedium)
@@ -124,13 +135,23 @@ fun AlarmDetailScreen(
             }
 
             if (missionType != MissionType.NONE) {
-                Text("Difficulty: ${when(missionDifficulty) { 1 -> "Easy"; 2 -> "Medium"; else -> "Hard" }}")
-                Slider(
-                    value = missionDifficulty.toFloat(),
-                    onValueChange = { missionDifficulty = it.toInt() },
-                    valueRange = 1f..3f,
-                    steps = 1
-                )
+                if (missionType == MissionType.BARCODE) {
+                    OutlinedTextField(
+                        value = missionTarget,
+                        onValueChange = { missionTarget = it },
+                        label = { Text("Target Barcode/QR Content") },
+                        modifier = Modifier.fillMaxWidth(),
+                        supportingText = { Text("Scan or type the content of the object to scan later.") }
+                    )
+                } else {
+                    Text("Difficulty: ${when(missionDifficulty) { 1 -> "Easy"; 2 -> "Medium"; else -> "Hard" }}")
+                    Slider(
+                        value = missionDifficulty.toFloat(),
+                        onValueChange = { missionDifficulty = it.toInt() },
+                        valueRange = 1f..3f,
+                        steps = 1
+                    )
+                }
             }
         }
     }

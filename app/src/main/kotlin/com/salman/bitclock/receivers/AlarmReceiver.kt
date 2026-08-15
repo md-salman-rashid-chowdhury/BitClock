@@ -53,6 +53,8 @@ class AlarmReceiver : BroadcastReceiver() {
             putExtra("SOUND_URI", alarm.soundUri)
             putExtra("VIBRATE", alarm.isVibrate)
             putExtra("SNOOZE_MINUTES", alarm.snoozeMinutes)
+            putExtra("SNOOZE_COUNT", alarm.snoozeCount)
+            putExtra("SNOOZE_LIMIT", alarm.snoozeLimit)
             putExtra("MISSION_TYPE", alarm.missionType.name)
             putExtra("MISSION_DIFFICULTY", alarm.missionDifficulty)
             putExtra("MISSION_TARGET", alarm.missionTarget)

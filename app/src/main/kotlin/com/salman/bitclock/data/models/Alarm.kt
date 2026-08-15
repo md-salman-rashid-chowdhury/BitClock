@@ -50,7 +50,13 @@ data class Alarm(
     val missionDifficulty: Int = 1,
 
     @ColumnInfo(name = "mission_target")
-    val missionTarget: String = ""
+    val missionTarget: String = "",
+
+    @ColumnInfo(name = "snooze_limit")
+    val snoozeLimit: Int = 3, // 0 for infinite, -1 for blocked
+
+    @ColumnInfo(name = "snooze_count")
+    val snoozeCount: Int = 0
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 

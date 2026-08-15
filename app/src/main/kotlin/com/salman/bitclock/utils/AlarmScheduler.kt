@@ -24,6 +24,10 @@ class AlarmScheduler(private val context: Context) {
     }
 
     fun scheduleAlarm(alarm: Alarm) {
+        scheduleAlarmAtTime(alarm.id, alarm.getNextAlarmTime(), alarm.label)
+    }
+
+    fun scheduleAlarmAtTime(alarmId: Int, triggerTime: Long, label: String) {
         if (alarmManager == null) {
             Log.e(TAG, "AlarmManager is null")
             return
@@ -34,10 +38,9 @@ class AlarmScheduler(private val context: Context) {
             return
         }
 
-        val triggerTime = alarm.getNextAlarmTime()
-        Log.d(TAG, "Scheduling alarm ID: ${alarm.id} for: $triggerTime")
+        Log.d(TAG, "Scheduling alarm ID: $alarmId for: $triggerTime")
 
-        val pendingIntent = createPendingIntent(alarm.id)
+        val pendingIntent = createPendingIntent(alarmId)
         val alarmClockInfo = AlarmManager.AlarmClockInfo(triggerTime, getMainActivityPendingIntent())
 
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
