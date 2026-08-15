@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
@@ -12,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.salman.bitclock.data.models.Habit
 import com.salman.bitclock.data.models.MissionType
 import com.salman.bitclock.data.repository.AlarmRepository
+import com.salman.bitclock.data.repository.HabitRepository
 import com.salman.bitclock.services.AlarmRingingService
 import com.salman.bitclock.ui.alarm.missions.BarcodeMission
 import com.salman.bitclock.ui.alarm.missions.MathMission
@@ -21,12 +24,12 @@ import com.salman.bitclock.ui.alarm.missions.ShakeMission
 import com.salman.bitclock.ui.theme.BitClockTheme
 import com.salman.bitclock.utils.AlarmScheduler
 import com.salman.bitclock.utils.VoiceBriefingManager
+import androidx.work.WorkManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import android.widget.Toast
 
 @AndroidEntryPoint
 class AlarmRingingActivity : ComponentActivity() {
@@ -40,12 +43,13 @@ class AlarmRingingActivity : ComponentActivity() {
     @Inject
     lateinit var voiceBriefingManager: VoiceBriefingManager
 
+    @Inject
+    lateinit var habitRepository: HabitRepository
+
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (!hasFocus) {
-            // Check if the alarm is still active
             Toast.makeText(this, "Dismiss the alarm first to use other system features!", Toast.LENGTH_LONG).show()
-            // Some apps try to close system dialogs here, but it's restricted now.
         }
     }
 
@@ -84,6 +88,12 @@ class AlarmRingingActivity : ComponentActivity() {
         val snoozeMinutes = intent.getIntExtra("SNOOZE_MINUTES", 10)
 
         setContent {
+            val habits by if (alarmId != -1) {
+                habitRepository.getHabitsForAlarm(alarmId).collectAsState(initial = emptyList())
+            } else {
+                remember { mutableStateOf(emptyList<Habit>()) }
+            }
+
             BitClockTheme {
                 AlarmRingingScreen(
                     label = label,
@@ -92,6 +102,7 @@ class AlarmRingingActivity : ComponentActivity() {
                     target = target,
                     snoozeCount = snoozeCount,
                     snoozeLimit = snoozeLimit,
+                    habits = habits,
                     onDismiss = {
                         dismissAlarm(alarmId, label)
                     },
@@ -111,10 +122,9 @@ class AlarmRingingActivity : ComponentActivity() {
                 if (alarm != null) {
                     repository.update(alarm.copy(snoozeCount = 0))
                 }
+                WorkManager.getInstance(applicationContext).cancelUniqueWork("accountability_$alarmId")
             }
             stopService(Intent(this@AlarmRingingActivity, AlarmRingingService::class.java))
-            // Give TTS some time to start before finishing activity if needed, 
-            // though TTS runs in its own process/service usually.
             finishAndRemoveTask()
         }
     }
@@ -127,7 +137,6 @@ class AlarmRingingActivity : ComponentActivity() {
                     val updatedAlarm = alarm.copy(snoozeCount = currentSnoozeCount + 1)
                     repository.update(updatedAlarm)
                     
-                    // Schedule next snooze trigger
                     val triggerTime = System.currentTimeMillis() + (snoozeMinutes * 60 * 1000)
                     scheduler.scheduleAlarmAtTime(alarmId, triggerTime, alarm.label)
                 }
@@ -146,9 +155,15 @@ fun AlarmRingingScreen(
     target: String,
     snoozeCount: Int,
     snoozeLimit: Int,
+    habits: List<Habit>,
     onDismiss: () -> Unit,
     onSnooze: () -> Unit
 ) {
+    var checkedHabits by remember(habits) { 
+        mutableStateOf(habits.associate { it.id to false }) 
+    }
+    
+    val allHabitsCompleted = checkedHabits.values.all { it }
     var isMissionComplete by remember { mutableStateOf(missionType == MissionType.NONE) }
 
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -157,7 +172,24 @@ fun AlarmRingingScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (!isMissionComplete) {
+            if (habits.isNotEmpty() && !allHabitsCompleted) {
+                Text(text = "Morning Habits", style = MaterialTheme.typography.headlineMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                habits.forEach { habit ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                    ) {
+                        Checkbox(
+                            checked = checkedHabits[habit.id] ?: false,
+                            onCheckedChange = { checked ->
+                                checkedHabits = checkedHabits.toMutableMap().apply { put(habit.id, checked) }
+                            }
+                        )
+                        Text(text = habit.name, style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+            } else if (!isMissionComplete) {
                 when (missionType) {
                     MissionType.MATH -> MathMission(
                         difficulty = difficulty,

@@ -10,6 +10,7 @@ material = "1.12.0"
 room = "2.8.4"
 hilt = "2.60.1"
 composeBom = "2026.08.00"
+work = "2.10.0"
 navigationCompose = "2.8.7"
 hiltNavigationCompose = "1.2.0"
 lifecycle = "2.8.7"
@@ -38,6 +39,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 
 # Compose
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

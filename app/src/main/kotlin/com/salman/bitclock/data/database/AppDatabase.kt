@@ -7,12 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.salman.bitclock.data.models.Alarm
-import com.salman.bitclock.data.models.SleepSession
-import com.salman.bitclock.data.models.Timer
-import com.salman.bitclock.data.models.WorldClock
+import com.salman.bitclock.data.models.*
 
-@Database(entities = [Alarm::class, Timer::class, WorldClock::class, SleepSession::class], version = 5, exportSchema = false)
+@Database(
+    entities = [Alarm::class, Timer::class, WorldClock::class, SleepSession::class, Habit::class, AlarmProfile::class],
+    version = 6,
+    exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
 
@@ -20,6 +21,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun timerDao(): TimerDao
     abstract fun worldClockDao(): WorldClockDao
     abstract fun sleepDao(): SleepDao
+    abstract fun habitDao(): HabitDao
+    abstract fun profileDao(): ProfileDao
 
     companion object {
         @Volatile
@@ -42,11 +45,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // Add new columns to alarms table
                 db.execSQL("ALTER TABLE alarms ADD COLUMN smart_wake_enabled INTEGER NOT NULL DEFAULT 0")
                 db.execSQL("ALTER TABLE alarms ADD COLUMN smart_wake_window INTEGER NOT NULL DEFAULT 20")
                 
-                // Create sleep_sessions table
                 db.execSQL("""
                     CREATE TABLE IF NOT EXISTS sleep_sessions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -59,6 +60,36 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Update alarms table with Phase 5 fields
+                db.execSQL("ALTER TABLE alarms ADD COLUMN has_habit_checklist INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN profile_id INTEGER")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN accountability_contact TEXT")
+                db.execSQL("ALTER TABLE alarms ADD COLUMN accountability_delay INTEGER NOT NULL DEFAULT 10")
+
+                // Create habits table
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS habits (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        alarm_id INTEGER NOT NULL,
+                        name TEXT NOT NULL,
+                        is_completed INTEGER NOT NULL DEFAULT 0,
+                        FOREIGN KEY(alarm_id) REFERENCES alarms(id) ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+
+                // Create alarm_profiles table
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS alarm_profiles (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        name TEXT NOT NULL,
+                        is_active INTEGER NOT NULL DEFAULT 1
+                    )
+                """.trimIndent())
+            }
+        }
+
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -66,7 +97,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "bitclock_database"
                 )
-                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                 .build()
                 INSTANCE = instance
                 instance

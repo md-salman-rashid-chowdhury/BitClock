@@ -5,7 +5,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.salman.bitclock.data.models.Alarm
+import com.salman.bitclock.data.models.Habit
 import com.salman.bitclock.data.models.MissionType
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,6 +38,8 @@ fun AlarmDetailScreen(
     var snoozeLimit by remember { mutableIntStateOf(existingAlarm?.snoozeLimit ?: 3) }
     var smartWakeEnabled by remember { mutableStateOf(existingAlarm?.smartWakeEnabled ?: false) }
     var smartWakeWindow by remember { mutableIntStateOf(existingAlarm?.smartWakeWindowMinutes ?: 20) }
+    var accountabilityContact by remember { mutableStateOf(existingAlarm?.accountabilityContact ?: "") }
+    var accountabilityDelay by remember { mutableIntStateOf(existingAlarm?.accountabilityDelayMinutes ?: 10) }
 
     Scaffold(
         topBar = {
@@ -59,7 +64,9 @@ fun AlarmDetailScreen(
                                     missionTarget = missionTarget,
                                     snoozeLimit = snoozeLimit,
                                     smartWakeEnabled = smartWakeEnabled,
-                                    smartWakeWindowMinutes = smartWakeWindow
+                                    smartWakeWindowMinutes = smartWakeWindow,
+                                    accountabilityContact = accountabilityContact.ifBlank { null },
+                                    accountabilityDelayMinutes = accountabilityDelay
                                 )
                             )
                         } else {
@@ -75,7 +82,9 @@ fun AlarmDetailScreen(
                                         missionTarget = missionTarget,
                                         snoozeLimit = snoozeLimit,
                                         smartWakeEnabled = smartWakeEnabled,
-                                        smartWakeWindowMinutes = smartWakeWindow
+                                        smartWakeWindowMinutes = smartWakeWindow,
+                                        accountabilityContact = accountabilityContact.ifBlank { null },
+                                        accountabilityDelayMinutes = accountabilityDelay
                                     )
                                 )
                             }
@@ -140,6 +149,95 @@ fun AlarmDetailScreen(
             }
 
             HorizontalDivider()
+
+            if (alarmId != null) {
+                Text("Morning Habits", style = MaterialTheme.typography.titleMedium)
+                val habits by viewModel.getHabitsForAlarm(alarmId).collectAsState(initial = emptyList())
+                var newHabitName by remember { mutableStateOf("") }
+
+                habits.forEach { habit ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = habit.name, modifier = Modifier.weight(1f))
+                        IconButton(onClick = { viewModel.deleteHabit(habit) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Habit")
+                        }
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = newHabitName,
+                        onValueChange = { newHabitName = it },
+                        label = { Text("New Habit") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        if (newHabitName.isNotBlank()) {
+                            viewModel.addHabit(Habit(alarmId = alarmId, name = newHabitName))
+                            newHabitName = ""
+                        }
+                    }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Habit")
+                    }
+                }
+                
+                HorizontalDivider()
+            }
+
+            Text("Shared Accountability", style = MaterialTheme.typography.titleMedium)
+            OutlinedTextField(
+                value = accountabilityContact,
+                onValueChange = { accountabilityContact = it },
+                label = { Text("Contact (Email or Phone)") },
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = { Text("Notified if alarm isn't dismissed.") }
+            )
+            
+            if (accountabilityContact.isNotBlank()) {
+                Text("Delay: $accountabilityDelay min")
+                Slider(
+                    value = accountabilityDelay.toFloat(),
+                    onValueChange = { accountabilityDelay = it.toInt() },
+                    valueRange = 1f..30f,
+                    steps = 29
+                )
+            }
+
+            HorizontalDivider()
+
+            if (alarmId != null) {
+                Text("Morning Habits", style = MaterialTheme.typography.titleMedium)
+                val habits by viewModel.getHabitsForAlarm(alarmId).collectAsState(initial = emptyList())
+                var newHabitName by remember { mutableStateOf("") }
+
+                habits.forEach { habit ->
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = habit.name, modifier = Modifier.weight(1f))
+                        IconButton(onClick = { viewModel.deleteHabit(habit) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete Habit")
+                        }
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = newHabitName,
+                        onValueChange = { newHabitName = it },
+                        label = { Text("New Habit") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    IconButton(onClick = {
+                        if (newHabitName.isNotBlank()) {
+                            viewModel.addHabit(Habit(alarmId = alarmId, name = newHabitName))
+                            newHabitName = ""
+                        }
+                    }) {
+                        Icon(Icons.Default.Add, contentDescription = "Add Habit")
+                    }
+                }
+                
+                HorizontalDivider()
+            }
 
             Text("Mission", style = MaterialTheme.typography.titleMedium)
             Row(

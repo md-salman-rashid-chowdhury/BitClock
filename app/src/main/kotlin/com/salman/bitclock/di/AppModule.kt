@@ -50,6 +50,14 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideHabitDao(database: AppDatabase): com.salman.bitclock.data.database.HabitDao = database.habitDao()
+
+    @Provides
+    @Singleton
+    fun provideProfileDao(database: AppDatabase): com.salman.bitclock.data.database.ProfileDao = database.profileDao()
+
+    @Provides
+    @Singleton
     fun provideAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler {
         return AlarmScheduler(context)
     }

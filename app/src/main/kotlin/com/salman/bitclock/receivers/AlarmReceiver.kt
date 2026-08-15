@@ -4,7 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.salman.bitclock.di.AppModule
+import com.salman.bitclock.services.AccountabilityWorker
 import com.salman.bitclock.services.AlarmRingingService
 import com.salman.bitclock.utils.AlarmScheduler
 import dagger.hilt.android.EntryPointAccessors
@@ -12,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class AlarmReceiver : BroadcastReceiver() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -33,6 +39,12 @@ class AlarmReceiver : BroadcastReceiver() {
                     val alarm = repository.getAlarmByIdSync(alarmId)
                     if (alarm != null && alarm.isEnabled) {
                         startAlarmService(context, alarm)
+                        
+                        // Schedule accountability worker if contact is set
+                        if (!alarm.accountabilityContact.isNullOrBlank()) {
+                            scheduleAccountabilityWorker(context, alarm)
+                        }
+
                         if (alarm.isRepeating()) {
                             scheduler.scheduleAlarm(alarm)
                         } else {
@@ -44,6 +56,24 @@ class AlarmReceiver : BroadcastReceiver() {
                 }
             }
         }
+    }
+
+    private fun scheduleAccountabilityWorker(context: Context, alarm: com.salman.bitclock.data.models.Alarm) {
+        val workData = Data.Builder()
+            .putString("CONTACT", alarm.accountabilityContact)
+            .putString("LABEL", alarm.label)
+            .build()
+
+        val workRequest = OneTimeWorkRequestBuilder<AccountabilityWorker>()
+            .setInitialDelay(alarm.accountabilityDelayMinutes.toLong(), TimeUnit.MINUTES)
+            .setInputData(workData)
+            .build()
+
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            "accountability_${alarm.id}",
+            ExistingWorkPolicy.REPLACE,
+            workRequest
+        )
     }
 
     private fun startAlarmService(context: Context, alarm: com.salman.bitclock.data.models.Alarm) {

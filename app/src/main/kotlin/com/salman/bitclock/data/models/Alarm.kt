@@ -62,7 +62,19 @@ data class Alarm(
     val smartWakeEnabled: Boolean = false,
 
     @ColumnInfo(name = "smart_wake_window")
-    val smartWakeWindowMinutes: Int = 20
+    val smartWakeWindowMinutes: Int = 20,
+
+    @ColumnInfo(name = "has_habit_checklist")
+    val hasHabitChecklist: Boolean = false,
+
+    @ColumnInfo(name = "profile_id")
+    val profileId: Int? = null,
+
+    @ColumnInfo(name = "accountability_contact")
+    val accountabilityContact: String? = null,
+
+    @ColumnInfo(name = "accountability_delay")
+    val accountabilityDelayMinutes: Int = 10
 ) {
     fun isRepeating(): Boolean = repeatDays != 0
 
