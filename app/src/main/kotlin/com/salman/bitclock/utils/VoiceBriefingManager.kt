@@ -16,7 +16,11 @@ class VoiceBriefingManager @Inject constructor(
     private var isInitialized = false
 
     init {
-        tts = TextToSpeech(context, this)
+        try {
+            tts = TextToSpeech(context, this)
+        } catch (e: Exception) {
+            android.util.Log.e("VoiceBriefing", "Failed to init TTS", e)
+        }
     }
 
     override fun onInit(status: Int) {

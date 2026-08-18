@@ -112,7 +112,11 @@ class AlarmRingingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.stop()
+        try {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.stop()
+            }
+        } catch (_: Exception) {}
         mediaPlayer?.release()
         vibrator?.cancel()
         serviceScope.cancel()

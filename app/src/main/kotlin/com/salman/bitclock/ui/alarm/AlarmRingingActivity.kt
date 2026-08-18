@@ -91,7 +91,11 @@ class AlarmRingingActivity : ComponentActivity() {
         val snoozeMinutes = intent.getIntExtra("SNOOZE_MINUTES", 10)
 
         CoroutineScope(Dispatchers.IO).launch {
-            auditLogRepository.insertLog("Alarm Started", "Alarm '$label' started ringing.")
+            try {
+                auditLogRepository.insertLog("Alarm Started", "Alarm '$label' started ringing.")
+            } catch (e: Exception) {
+                android.util.Log.e("AlarmRinging", "Failed to insert audit log", e)
+            }
         }
 
         setContent {

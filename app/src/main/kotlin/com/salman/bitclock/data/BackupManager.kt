@@ -34,18 +34,22 @@ class BackupManager @Inject constructor(
     }
 
     suspend fun importData(json: String) {
-        val data = gson.fromJson(json, BackupData::class.java)
+        val data = try {
+            gson.fromJson(json, BackupData::class.java)
+        } catch (e: Exception) {
+            null
+        } ?: return
         
         // Clear existing data for a clean restore
         database.clearAllTables()
         
         // Insert profiles first (FK dependency)
-        data.profiles.forEach { profileRepository.insertProfile(it) }
+        data.profiles?.forEach { profileRepository.insertProfile(it) }
         
         // Insert alarms
-        data.alarms.forEach { alarmRepository.insert(it) }
+        data.alarms?.forEach { alarmRepository.insert(it) }
         
         // Insert habits
-        data.habits.forEach { habitRepository.insertHabit(it) }
+        data.habits?.forEach { habitRepository.insertHabit(it) }
     }
 }
