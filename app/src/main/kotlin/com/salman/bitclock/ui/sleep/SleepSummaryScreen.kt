@@ -48,7 +48,7 @@ fun SleepSummaryScreen(
 
 @Composable
 fun SleepSessionCard(session: SleepSession) {
-    val locale = Locale.getDefault()
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val dateFormat = remember(locale) { SimpleDateFormat("MMM dd, HH:mm", locale) }
     val durationHrs = (session.endTime - session.startTime) / (1000 * 60 * 60f)
 

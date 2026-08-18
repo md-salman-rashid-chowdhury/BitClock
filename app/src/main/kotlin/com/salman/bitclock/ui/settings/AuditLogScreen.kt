@@ -48,7 +48,7 @@ fun AuditLogScreen(
 
 @Composable
 fun AuditLogItem(log: AuditLog) {
-    val locale = Locale.getDefault()
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val dateFormat = remember(locale) { SimpleDateFormat("MMM dd, HH:mm:ss", locale) }
     
     Card(modifier = Modifier.fillMaxWidth()) {

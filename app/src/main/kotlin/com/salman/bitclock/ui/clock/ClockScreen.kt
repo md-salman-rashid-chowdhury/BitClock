@@ -34,8 +34,9 @@ fun ClockScreen(
         }
     }
 
-    val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-    val dateFormat = SimpleDateFormat("EEE, MMM d", Locale.getDefault())
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val timeFormat = remember(locale) { SimpleDateFormat("HH:mm:ss", locale) }
+    val dateFormat = remember(locale) { SimpleDateFormat("EEE, MMM d", locale) }
 
     Scaffold(
         floatingActionButton = {
@@ -116,10 +117,11 @@ fun WorldClockItem(
     currentTime: Date,
     onDelete: () -> Unit
 ) {
-    val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+    val locale = androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
+    val sdf = remember(locale) { SimpleDateFormat("HH:mm", locale) }
     sdf.timeZone = TimeZone.getTimeZone(clock.timeZoneId)
     
-    val dayFormat = SimpleDateFormat("EEE", Locale.getDefault())
+    val dayFormat = remember(locale) { SimpleDateFormat("EEE", locale) }
     dayFormat.timeZone = TimeZone.getTimeZone(clock.timeZoneId)
 
     Row(
